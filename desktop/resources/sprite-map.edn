@@ -1,0 +1,46 @@
+{
+  :mei {
+        :spritesheet-width 864
+        :spritesheet-height 256
+        :spritesheet-cols 17
+        :spritesheet-rows 8
+        :frame-width 24
+        :frame-height 32
+        :frame-set-count nil
+        :frames-count nil
+
+        :frames [
+                  :walk {
+                         :up {:start 1
+                              :end 3}
+                         :right {:start 18
+                                 :end 20}
+                         :left {:start 52
+                                :end 54}
+                         :down {:start 35
+                                :end 37}
+                         }
+                 :run {
+                        :up {:start 4
+                             :end 6}
+                        :right []
+                        :left []
+                        :down []
+                        }
+                 :jump {
+                         :left []
+                         :right []
+                         }
+                 :attack {}
+                 ]
+        }
+
+ :items []
+
+ :enemies []
+
+ :allies []
+
+ :levels []
+
+ }
