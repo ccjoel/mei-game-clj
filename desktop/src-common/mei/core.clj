@@ -47,10 +47,10 @@
 
     (let [sheet (texture "mei.png")
           tiles (texture! sheet :split (-> sprite-map :mei :tile-width) (-> sprite-map :mei :tile-height))
-          mei-images (vec (for [col (range (-> sprite-map :mei :tile-cols))]
-                       (vec (for [row (range (-> sprite-map :mei :tile-rows))]
-                         (texture (aget tiles row col))))))]
-        (me/create mei-images)))
+          mei-images (vec (for [row (range (-> sprite-map :mei :tile-rows))]
+                            (vec (for [col (range (-> sprite-map :mei :tile-cols))]
+                                   (texture (aget tiles row col))))))]
+      (me/create mei-images)))
 
   :on-render
   (fn [screen entities]
@@ -110,8 +110,8 @@
 
 ; nrepl port: 35647
 
-(mei.core.desktop-launcher/-main)
+;; (mei.core.desktop-launcher/-main)
 
-(on-gl (set-screen! mei-game main-screen text-screen))
+;; (on-gl (set-screen! mei-game main-screen text-screen))
 
-(e! identity main-screen :width 0.5 :height 0.7)
+;; (e! identity main-screen :x 0 :y 3)

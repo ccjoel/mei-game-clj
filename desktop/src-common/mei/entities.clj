@@ -8,36 +8,30 @@
   (edn/read-string (slurp (clojure.java.io/resource "sprite-map.edn"))))
 
 (defn create
-  [mei-textures] ; vector of [cols [rows]]
+  [mei-textures] ; vector of [rows [cols]]
   (println "creating entities...")
 
-  (println "number of cols" (count mei-textures))
-  (println "number of rows" (count (first mei-textures)))
+;;   (println "number of rows" (count mei-textures))
+;;   (println "number of cols" (count (first mei-textures)))
 
   (let [first-texture (util/texture-coords mei-textures [1 0])]
 
   (assoc first-texture
     ; assoc more!
     :stand-up first-texture
-    :stand-right (util/texture-coords mei-textures [0 1])
+    :stand-right (util/texture-coords mei-textures [1 0])
     :stand-down (util/texture-coords mei-textures [1 2])
-    :stand-left (util/texture-coords mei-textures [1 3])
+    :stand-left (util/texture-coords mei-textures [3 0])
 
-    :jump-right (util/texture-coords mei-textures [16 3])
-    :jump-left (texture (util/texture-coords mei-textures [16 3]) :flip true false)
+    :jump-right (util/texture-coords mei-textures [3 16])
+    :jump-left (texture (util/texture-coords mei-textures [3 16]) :flip true false)
 
     :walk-right (animation util/duration
-                           (util/texture-action-coords mei-textures 3 [0 3])
-;;                            walk
+                           (util/texture-action-coords mei-textures 1 [0 3])
                            :set-play-mode (play-mode :loop-pingpong))
     :walk-left (animation util/duration
-                           (util/texture-action-coords mei-textures 1 [0 3])
-;;                            walk
+                           (util/texture-action-coords mei-textures 3 [0 3])
                            :set-play-mode (play-mode :loop-pingpong))
-
-;;     (animation util/duration
-;;                           (map #(texture % :flip true false) walk)
-;;                           :set-play-mode (play-mode :loop-pingpong))
 
     :width 1
     :height (/ (-> sprite-map :mei :tile-height) (-> sprite-map :mei :tile-width))
