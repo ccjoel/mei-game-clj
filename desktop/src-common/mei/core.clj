@@ -7,20 +7,21 @@
             [mei.entities :as me]
             [mei.util :as util]))
 
-(declare mei-game main-screen text-screen)
+(declare mei-game main-screen text-screen) ; declare to use before defining
 
 (defn update-screen!
   [screen entities]
-  (doseq [{:keys [x y height me? to-destroy]} entities]
+  (doseq [{:keys [x y height me? to-destroy]} entities] ; doseq for side effects, for to return values
     (when me?
       (position! screen x (/ util/vertical-tiles 2))
       (when (< y (- height))
-        (set-screen! mei-game main-screen text-screen)))
-    (when-let [[tile-x tile-y] to-destroy]
+        (set-screen! mei-game main-screen text-screen)))    ;game over... starts again!
+    (when-let [[tile-x tile-y] to-destroy]                  ; destroy walls when hit!
       (tiled-map-layer! (tiled-map-layer screen "walls")
                         :set-cell tile-x tile-y nil)))
   (map #(dissoc % :to-destroy) entities))
 
+; TODO: future screen when errors show
 ;; (defscreen blank-screen
 ;;   :on-render
 ;;   (fn [screen entities]
@@ -31,7 +32,7 @@
 (defscreen main-screen
   :on-show
   (fn [screen entities]
-    (->> (orthogonal-tiled-map "level1.tmx" (/ 1 util/pixels-per-tile))
+    (->> (orthogonal-tiled-map "desert.tmx" (/ 1 util/pixels-per-tile))
          (update! screen :timeline [] :camera (orthographic) :renderer))
     (let [sheet (texture "mei.png")
           tiles (texture! sheet :split (-> sprite-map :mei :tile-width) (-> sprite-map :mei :tile-height))
@@ -44,7 +45,7 @@
   (fn [screen entities]
     (clear! 0.5 0.7 0.3 1) ; these numbers are the background color
     (some->>
-      (if (or (key-pressed? :space) (util/touched? :center))
+      (if (or (key-pressed? :r))
         (rewind! screen 2)
         (map (fn [entity]
                (->> entity
@@ -83,6 +84,8 @@
   :on-create
   (fn [this]
     (set-screen! this main-screen text-screen)))
+
+
 
 ;; (set-screen-wrapper! (fn [screen screen-fn]
 ;;                        (try (screen-fn)

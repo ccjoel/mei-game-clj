@@ -12,7 +12,7 @@
   (let [first-texture (util/texture-coords mei-textures [1 0])]
 
   (assoc first-texture
-    ; assoc more!
+    ; assoc more frames
     :stand-up first-texture
     :stand-right (util/texture-coords mei-textures [1 0])
     :stand-down (util/texture-coords mei-textures [1 2])
@@ -42,7 +42,7 @@
     :y-velocity 0
     :x 20
     :y 10
-    :me? true
+    :me? true            ; used to filter by player
     :can-jump? false
     :direction :right))  ; direction determines if it will walk right or left
 

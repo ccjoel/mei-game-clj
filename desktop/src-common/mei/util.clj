@@ -1,10 +1,11 @@
 (ns mei.util
   (:require [play-clj.core :refer :all]))
 
-(def ^:const vertical-tiles 20)
-(def ^:const pixels-per-tile 16)
+(def ^:const vertical-tiles 40)
+;; (def ^:const vertical-tiles 20)
+(def ^:const pixels-per-tile 32)
+;; (def ^:const pixels-per-tile 16)
 (def ^:const duration 0.15)
-;; (def ^:const duration 0.85)
 (def ^:const damping 0.5)
 (def ^:const max-velocity 14)
 (def ^:const max-jump-velocity (* max-velocity 4))
@@ -18,35 +19,20 @@
       0
       velocity)))
 
-(defn touched?
-  [key]
-  (and (game :touched?)
-       (case key
-         :down (< (game :y) (/ (game :height) 3))
-         :up (> (game :y) (* (game :height) (/ 2 3)))
-         :left (< (game :x) (/ (game :width) 3))
-         :right (> (game :x) (* (game :width) (/ 2 3)))
-         :center (and (< (/ (game :width) 3) (game :x) (* (game :width) (/ 2 3)))
-                      (< (/ (game :height) 3) (game :y) (* (game :height) (/ 2 3))))
-         false)))
-
 (defn get-x-velocity
   [{:keys [me? x-velocity]}]
   (if me?
     (cond
-      (or (key-pressed? :dpad-left) (touched? :left))
-      (* -1 max-velocity)
-      (or (key-pressed? :dpad-right) (touched? :right))
-      max-velocity
-      :else
-      x-velocity)
+      (key-pressed? :dpad-left)   (- max-velocity)
+      (key-pressed? :dpad-right)  max-velocity
+      :else                       x-velocity)
     x-velocity))
 
 (defn get-y-velocity
   [{:keys [me? y-velocity can-jump?]}]
   (if me?
     (cond
-      (and can-jump? (or (key-pressed? :dpad-up) (touched? :up)))
+      (and can-jump? (key-pressed? :space))
       max-jump-velocity
       :else
       y-velocity)
