@@ -27,23 +27,33 @@
       :else                       x-velocity)
     x-velocity))
 
-
 (defn get-y-velocity
-  [{:keys [me? y-velocity can-jump?]}]
+  [{:keys [me? y-velocity]}]
   (if me?
     (cond
-      (and can-jump? (key-pressed? :space))
-      max-jump-velocity
-      :else
-      y-velocity)
+      (key-pressed? :dpad-down)   (- max-velocity)
+      (key-pressed? :dpad-up)  max-velocity
+      :else                       y-velocity)
     y-velocity))
+
+;; (defn get-y-velocity
+;;   [{:keys [me? y-velocity can-jump?]}]
+;;   (if me?
+;;     (cond
+;;       (and can-jump? (key-pressed? :space))
+;;       max-jump-velocity
+;;       :else
+;;       y-velocity)
+;;     y-velocity))
 
 ; direction of movement
 (defn get-direction
-  [{:keys [x-velocity direction]}]
+  [{:keys [x-velocity y-velocity direction]}]
   (cond
     (> x-velocity 0) :right
     (< x-velocity 0) :left
+    (> y-velocity 0) :up
+    (< y-velocity 0) :down
     :else
     direction))
 

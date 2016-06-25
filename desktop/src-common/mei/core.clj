@@ -11,16 +11,17 @@
 
 (defn update-screen!
   [screen entities]
-  (doseq [{:keys [x y height me? to-destroy]} entities] ; doseq for side effects, for to return values
+  (doseq [{:keys [x y height me?]} entities] ; doseq for side effects, for to return values
     (when me?
       (position! screen x (/ util/vertical-tiles 2))
       (when (< y (- height))
         (set-screen! mei-game main-screen text-screen)))    ;game over... starts again! shouldn't get to edge in this version...
-;;     (when-let [[tile-x tile-y] to-destroy]                  ; destroy walls when hit from below!
-;;       (tiled-map-layer! (tiled-map-layer screen "walls")
-;;                         :set-cell tile-x tile-y nil))
+    ;;     (when-let [[tile-x tile-y] to-destroy]                  ; destroy walls when hit from below!
+    ;;       (tiled-map-layer! (tiled-map-layer screen "walls")
+    ;;                         :set-cell tile-x tile-y nil))
     )
-  (map #(dissoc % :to-destroy) entities))
+  entities) ; changed this line... not mapping to-destroy animore
+;; (map #(dissoc % :to-destroy) entities) -> how we destroy items!
 
 ; TODO: future screen when errors show
 ;; (defscreen blank-screen
@@ -44,7 +45,7 @@
 
   :on-render
   (fn [screen entities]
-    (clear! 1 1 1 1) ; these numbers are the background color
+    (clear!) ;  additional clear! params ...1 1 1 1 these numbers is the rgba background color
     (some->>
       (if (or (key-pressed? :r))
         (rewind! screen 2)
