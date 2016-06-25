@@ -2,21 +2,12 @@
   (:require [play-clj.core :as play :refer :all]
             [play-clj.g2d :as g2d :refer :all]   ;funcs for 2D games
             [play-clj.ui :as ui]  ;ui code (labels.. etc)
-            [clojure.edn :as edn]
+            [mei.constants :refer [sprite-map]]
             [play-clj.repl :refer [e e! s s!]]
             [mei.entities :as me]
             [mei.util :as util]))
 
 (declare mei-game main-screen text-screen)
-
-;; 136 tile items total
-; 0 -> 16 ...  17 cols
-; 0 -> 7 ... 8 rows
-
-; TODO move to constants
-(def sprite-map
-  (edn/read-string (slurp (clojure.java.io/resource "sprite-map.edn"))))
-
 
 (defn update-screen!
   [screen entities]
@@ -40,11 +31,8 @@
 (defscreen main-screen
   :on-show
   (fn [screen entities]
-;;     (update! screen :renderer (stage))
-
     (->> (orthogonal-tiled-map "level1.tmx" (/ 1 util/pixels-per-tile))
          (update! screen :timeline [] :camera (orthographic) :renderer))
-
     (let [sheet (texture "mei.png")
           tiles (texture! sheet :split (-> sprite-map :mei :tile-width) (-> sprite-map :mei :tile-height))
           mei-images (vec (for [row (range (-> sprite-map :mei :tile-rows))]

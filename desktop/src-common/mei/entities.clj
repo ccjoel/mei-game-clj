@@ -2,17 +2,12 @@
   (:require [play-clj.core :refer :all]
             [play-clj.g2d :refer :all]
             [mei.util :as util]
-            [clojure.edn :as edn]))
-
-(def sprite-map
-  (edn/read-string (slurp (clojure.java.io/resource "sprite-map.edn"))))
+            [mei.constants :refer [sprite-map]]
+            ))
 
 (defn create
   [mei-textures] ; vector of [rows [cols]]
-  (println "creating entities...")
-
-;;   (println "number of rows" (count mei-textures))
-;;   (println "number of cols" (count (first mei-textures)))
+  (println "creating mei frames...")
 
   (let [first-texture (util/texture-coords mei-textures [1 0])]
 
@@ -33,7 +28,6 @@
                            (util/texture-action-coords mei-textures 3 [0 3])
                            :set-play-mode (play-mode :loop-pingpong))
 
-
     :run-right (animation util/duration
                            (util/texture-action-coords mei-textures 1 [3 6])
                            :set-play-mode (play-mode :loop-pingpong))
@@ -42,15 +36,15 @@
                            (util/texture-action-coords mei-textures 3 [3 6])
                            :set-play-mode (play-mode :loop-pingpong))
 
-    :width (* 2 1)
-    :height (* 2 (/ (-> sprite-map :mei :tile-height) (-> sprite-map :mei :tile-width)))
+    :width (* 1.5 1)
+    :height (* 1.5 (/ (-> sprite-map :mei :tile-height) (-> sprite-map :mei :tile-width)))
     :x-velocity 0
     :y-velocity 0
     :x 20
     :y 10
     :me? true
     :can-jump? false
-    :direction :right))  ; what does direction do?
+    :direction :right))  ; direction determines if it will walk right or left
 
   )
 

@@ -11,7 +11,7 @@
 
         :frames {
                   :walk {
-                          :up [[0 3] []]
+                          :up []
                           :right []
                           :down []
                           :left []
