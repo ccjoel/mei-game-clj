@@ -57,18 +57,15 @@
     (clear! 0.5 0.7 0.3 1) ; these numbers are the background color
     (some->>
       (if (or (key-pressed? :space) (util/touched? :center))
-               (rewind! screen 2)
-
+        (rewind! screen 2)
         (map (fn [entity]
-                      (->> entity
-                           (me/move screen)
-                           (me/prevent-move screen)
-                           (me/animate screen)))
-                    entities)
-               )
-             (render! screen)
-             (update-screen! screen))
-    )
+               (->> entity
+                    (me/move screen)
+                    (me/prevent-move screen)
+                    (me/animate screen)))
+             entities))
+      (render! screen)
+      (update-screen! screen)))
 
   :on-resize
   (fn [{:keys [width height] :as screen} entities]
@@ -97,7 +94,7 @@
 (defgame mei-game
   :on-create
   (fn [this]
-    (set-screen! this main-screen)))
+    (set-screen! this main-screen text-screen)))
 
 ;; (set-screen-wrapper! (fn [screen screen-fn]
 ;;                        (try (screen-fn)

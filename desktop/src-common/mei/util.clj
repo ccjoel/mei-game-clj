@@ -3,8 +3,8 @@
 
 (def ^:const vertical-tiles 20)
 (def ^:const pixels-per-tile 16)
-;; (def ^:const duration 0.15)
-(def ^:const duration 0.6)
+(def ^:const duration 0.15)
+;; (def ^:const duration 0.85)
 (def ^:const damping 0.5)
 (def ^:const max-velocity 14)
 (def ^:const max-jump-velocity (* max-velocity 4))

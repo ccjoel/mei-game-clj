@@ -33,15 +33,24 @@
                            (util/texture-action-coords mei-textures 3 [0 3])
                            :set-play-mode (play-mode :loop-pingpong))
 
-    :width 1
-    :height (/ (-> sprite-map :mei :tile-height) (-> sprite-map :mei :tile-width))
+
+    :run-right (animation util/duration
+                           (util/texture-action-coords mei-textures 1 [3 6])
+                           :set-play-mode (play-mode :loop-pingpong))
+
+    :run-left (animation util/duration
+                           (util/texture-action-coords mei-textures 3 [3 6])
+                           :set-play-mode (play-mode :loop-pingpong))
+
+    :width (* 2 1)
+    :height (* 2 (/ (-> sprite-map :mei :tile-height) (-> sprite-map :mei :tile-width)))
     :x-velocity 0
     :y-velocity 0
     :x 20
     :y 10
     :me? true
     :can-jump? false
-    :direction :up))
+    :direction :right))  ; what does direction do?
 
   )
 
@@ -66,7 +75,7 @@
   [screen {:keys [x-velocity y-velocity
                   stand-right stand-left
                   jump-right jump-left
-                  walk-right walk-left] :as entity}]
+                  run-right run-left] :as entity}]
   (let [direction (util/get-direction entity)]
     (merge entity
            (cond
@@ -74,8 +83,8 @@
              (if (= direction :right) jump-right jump-left)
              (not= x-velocity 0)
              (if (= direction :right)
-               (animation->texture screen walk-right)
-               (animation->texture screen walk-left))
+               (animation->texture screen run-right)
+               (animation->texture screen run-left))
              :else
              (if (= direction :right) stand-right stand-left))
            {:direction direction})))
