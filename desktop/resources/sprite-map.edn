@@ -2,17 +2,17 @@
   :mei {
         :spritesheet-width 864
         :spritesheet-height 256
-        :spritesheet-cols 17
-        :spritesheet-rows 8
-        :frame-width 24
-        :frame-height 32
+        :tile-cols 17
+        :tile-rows 8
+        :tile-width 24
+        :tile-height 32
         :frame-set-count nil
         :frames-count nil
 
         :frames [
                   :walk {
-                         :up {:start 1
-                              :end 3}
+                         :up {:start 0
+                              :end 2}
                          :right {:start 18
                                  :end 20}
                          :left {:start 52
