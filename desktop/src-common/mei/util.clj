@@ -3,7 +3,8 @@
 
 (def ^:const vertical-tiles 20)
 (def ^:const pixels-per-tile 16)
-(def ^:const duration 0.15)
+;; (def ^:const duration 0.15)
+(def ^:const duration 0.6)
 (def ^:const damping 0.5)
 (def ^:const max-velocity 14)
 (def ^:const max-jump-velocity (* max-velocity 4))
@@ -69,3 +70,9 @@
                  layers))
          (drop-while nil?)
          first)))
+
+(defn texture-coords [textures-vector [col row]]
+  (nth (nth textures-vector col) row))
+
+(defn texture-action-coords [textures-vector col [start end]]
+  (subvec (nth textures-vector col) start end))
