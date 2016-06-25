@@ -40,14 +40,14 @@
     :height (* 1.5 (/ (-> sprite-map :mei :tile-height) (-> sprite-map :mei :tile-width)))
     :x-velocity 0
     :y-velocity 0
-    :x 18
-    :y 9
+    :x 10
+    :y 8
     :me? true            ; used to filter by player
     :can-jump? false
     :direction :right))  ; direction determines if it will walk right or left
+)
 
-  )
-
+; move character
 (defn move
   [{:keys [delta-time]} {:keys [x y can-jump?] :as entity}]
   (let [x-velocity (util/get-x-velocity entity)
@@ -65,6 +65,7 @@
              :can-jump? (if (> y-velocity 0) false can-jump?))
       entity)))
 
+; animate character
 (defn animate
   [screen {:keys [x-velocity y-velocity
                   stand-right stand-left
@@ -83,6 +84,7 @@
              (if (= direction :right) stand-right stand-left))
            {:direction direction})))
 
+; prevent move when touching walls.
 (defn prevent-move
   [screen {:keys [x y x-change y-change] :as entity}]
   (let [old-x (- x x-change)
@@ -95,4 +97,5 @@
              {:x-velocity 0 :x-change 0 :x old-x})
            (when-let [tile (util/get-touching-tile screen entity-y "walls")]
              {:y-velocity 0 :y-change 0 :y old-y
-              :can-jump? (not up?) :to-destroy (when up? tile)}))))
+              :can-jump? (not up?) })))) ; decide if to jump
+;;           :to-destroy (when up? tile)  <- add tile to destroy queue...

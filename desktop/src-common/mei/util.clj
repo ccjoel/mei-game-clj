@@ -1,10 +1,8 @@
 (ns mei.util
   (:require [play-clj.core :refer :all]))
 
-(def ^:const vertical-tiles 40)
-;; (def ^:const vertical-tiles 20)
-(def ^:const pixels-per-tile 32)
-;; (def ^:const pixels-per-tile 16)
+(def ^:const vertical-tiles 43)
+(def ^:const pixels-per-tile 16)
 (def ^:const duration 0.15)
 (def ^:const damping 0.5)
 (def ^:const max-velocity 14)
@@ -19,6 +17,7 @@
       0
       velocity)))
 
+
 (defn get-x-velocity
   [{:keys [me? x-velocity]}]
   (if me?
@@ -27,6 +26,7 @@
       (key-pressed? :dpad-right)  max-velocity
       :else                       x-velocity)
     x-velocity))
+
 
 (defn get-y-velocity
   [{:keys [me? y-velocity can-jump?]}]
@@ -38,6 +38,7 @@
       y-velocity)
     y-velocity))
 
+; direction of movement
 (defn get-direction
   [{:keys [x-velocity direction]}]
   (cond
@@ -46,6 +47,8 @@
     :else
     direction))
 
+
+; if char is touching a tile, get it (by x / y)
 (defn get-touching-tile
   [screen {:keys [x y width height]} & layer-names]
   (let [layers (map #(tiled-map-layer screen %) layer-names)]
@@ -56,6 +59,7 @@
                  layers))
          (drop-while nil?)
          first)))
+
 
 (defn texture-coords [textures-vector [col row]]
   (nth (nth textures-vector col) row))

@@ -6,5 +6,5 @@
 
 (defn -main
   []
-  (LwjglApplication. mei-game "mei" 800 600)
+  (LwjglApplication. mei-game "mei" 600 700)
   (Keyboard/enableRepeatEvents true))

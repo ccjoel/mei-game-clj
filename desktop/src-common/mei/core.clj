@@ -16,7 +16,7 @@
       (position! screen x (/ util/vertical-tiles 2))
       (when (< y (- height))
         (set-screen! mei-game main-screen text-screen)))    ;game over... starts again! shouldn't get to edge in this version...
-;;     (when-let [[tile-x tile-y] to-destroy]                  ; destroy walls when hit!
+;;     (when-let [[tile-x tile-y] to-destroy]                  ; destroy walls when hit from below!
 ;;       (tiled-map-layer! (tiled-map-layer screen "walls")
 ;;                         :set-cell tile-x tile-y nil))
     )
@@ -33,7 +33,7 @@
 (defscreen main-screen
   :on-show
   (fn [screen entities]
-    (->> (orthogonal-tiled-map "desert.tmx" (/ 1 util/pixels-per-tile))
+    (->> (orthogonal-tiled-map "mei-home.tmx" (/ 1 util/pixels-per-tile))
          (update! screen :timeline [] :camera (orthographic) :renderer))
     (let [sheet (texture "mei.png")
           tiles (texture! sheet :split (-> sprite-map :mei :tile-width) (-> sprite-map :mei :tile-height))
