@@ -15,10 +15,11 @@
     (when me?
       (position! screen x (/ util/vertical-tiles 2))
       (when (< y (- height))
-        (set-screen! mei-game main-screen text-screen)))    ;game over... starts again!
-    (when-let [[tile-x tile-y] to-destroy]                  ; destroy walls when hit!
-      (tiled-map-layer! (tiled-map-layer screen "walls")
-                        :set-cell tile-x tile-y nil)))
+        (set-screen! mei-game main-screen text-screen)))    ;game over... starts again! shouldn't get to edge in this version...
+;;     (when-let [[tile-x tile-y] to-destroy]                  ; destroy walls when hit!
+;;       (tiled-map-layer! (tiled-map-layer screen "walls")
+;;                         :set-cell tile-x tile-y nil))
+    )
   (map #(dissoc % :to-destroy) entities))
 
 ; TODO: future screen when errors show
@@ -43,7 +44,7 @@
 
   :on-render
   (fn [screen entities]
-    (clear! 0.5 0.7 0.3 1) ; these numbers are the background color
+    (clear! 1 1 1 1) ; these numbers are the background color
     (some->>
       (if (or (key-pressed? :r))
         (rewind! screen 2)
