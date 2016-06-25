@@ -7,29 +7,26 @@
         :tile-width 24
         :tile-height 32
         :frame-set-count nil
-        :frames-count nil
+        :frames-count 136
 
         :frames [
                   :walk {
-                         :up {:start 0
-                              :end 2}
-                         :right {:start 18
-                                 :end 20}
-                         :left {:start 52
-                                :end 54}
-                         :down {:start 35
-                                :end 37}
+                          :up [0 3]
+                          :right [17 20]
+                          :down [34 37]
+                          :left [51 54]
                          }
                  :run {
-                        :up {:start 4
-                             :end 6}
+                        :up [4 6]
                         :right []
-                        :left []
                         :down []
+                        :left []
                         }
                  :jump {
-                         :left []
+                         :up []
                          :right []
+                         :down []
+                         :left []
                          }
                  :attack {}
                  ]

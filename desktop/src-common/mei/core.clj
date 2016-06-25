@@ -5,16 +5,19 @@
             [mei.core.desktop-launcher :as launch]
             [clojure.edn :as edn]
             [play-clj.repl :refer [e e! s s!]]
-            [mei.entities :as me]
+;;             [mei.entities :as me]
             ))
 
-;; (def mei
-;;     (ui/label "Hello world!" (color :white))
-;; (try
-;;   (texture "Clojure_logo.gif")
-;;   (catch NullPointerException e (println (str e)))
-;;   )
-;;   )
+;; 136 items total
+; 0 -> 16 to 17 items
+; 17 -> 33
+; 34 -> 50
+; 51 -> 67
+; 68 -> 84
+; 85 -> 101
+; 102 -> 118
+; 119 -> 135
+
 
 (def sprite-map
   (edn/read-string (slurp (clojure.java.io/resource "sprite-map.edn"))))
@@ -24,26 +27,21 @@
   (fn [screen entities]
     (clear!)))
 
-(defn get-cols [entity-name]
-  (range (-> sprite-map entity-name :tile-cols)))
-
-(defn get-rows [entity-name]
-  (range (-> sprite-map entity-name :tile-rows)))
 
 (defscreen main-screen
   :on-show
   (fn [screen entities]
     (update! screen :renderer (stage))
 
-;;     (texture "mei.png")
+    (texture "mei.png")
 
 ;;     aget
 
     (let [sheet (texture "mei.png")
           tiles (texture! sheet :split (-> sprite-map :mei :tile-width) (-> sprite-map :mei :tile-height))
-          mei-images (for [col (get-cols :mei)]
-                          (for [row (get-rows :mei)]
-                          (texture (aget tiles row col))))]
+          mei-images (for [col (range (-> sprite-map entity-name :tile-cols))]
+                       (for [row (range (-> sprite-map entity-name :tile-rows))]
+                         (texture (aget tiles row col))))]
       (apply me/create mei-images))
 
     )
@@ -67,6 +65,6 @@
 
 
 ;;;; repl'ing
-(launch/-main)
+;; (launch/-main)
 
-(on-gl (set-screen! mei-game main-screen))
+;; (on-gl (set-screen! mei-game main-screen))
