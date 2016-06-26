@@ -35,7 +35,7 @@
   :on-show
   (fn [screen entities]
     (music "home-music.mp3" :play :set-looping true)
-    (->> (orthogonal-tiled-map "mei-home.tmx" (/ 1 util/pixels-per-tile))
+    (->> (orthogonal-tiled-map "mei-home.tmx" (/ 1 util/pixels-per-tile))  ; insert this tiled map as the renderer for camera below
          (update! screen :timeline [] :camera (orthographic) :renderer))
     (let [sheet (texture "mei.png")
           tiles (texture! sheet :split (-> sprite-map :mei :tile-width) (-> sprite-map :mei :tile-height))
@@ -58,6 +58,8 @@
              entities))
       (render! screen)
       (update-screen! screen)))
+
+  ; add on key press to handle restart, forward? and other keyboard behaviors
 
   :on-resize
   (fn [{:keys [width height] :as screen} entities]
