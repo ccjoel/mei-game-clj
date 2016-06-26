@@ -14,6 +14,7 @@
                  [org.clojure/clojure "1.7.0"]
                  [play-clj "1.1.0"]]
 
+  :omit-source true
   :source-paths ["src" "src-common"]
   :test-paths ["test"]
   :javac-options ["-target" "1.6" "-source" "1.6" "-Xlint:-options"]
