@@ -1,6 +1,8 @@
 ## Introduction
 
-A play-clj game in which ... well, that part is up to you.
+Mei is a mage. She can cast spells, use magic shields, reverse time, throw tiles (from ground) at enemies.
+
+A play-clj game...
 
 ## Contents
 

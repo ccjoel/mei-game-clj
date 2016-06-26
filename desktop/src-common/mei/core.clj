@@ -13,22 +13,22 @@
   [screen entities]
   (doseq [{:keys [x y height me?]} entities] ; doseq for side effects, for to return values
     (when me?
-      (position! screen x (/ util/vertical-tiles 2))
-      (when (< y (- height))
-        (set-screen! mei-game main-screen text-screen)))    ;game over... starts again! shouldn't get to edge in this version...
-    ;;     (when-let [[tile-x tile-y] to-destroy]                  ; destroy walls when hit from below!
-    ;;       (tiled-map-layer! (tiled-map-layer screen "walls")
-    ;;                         :set-cell tile-x tile-y nil))
-    )
-  entities) ; changed this line... not mapping to-destroy animore
-;; (map #(dissoc % :to-destroy) entities) -> how we destroy items!
+      (position! screen x y)))  ; position screen to follow player
+  entities)
 
-; TODO: future screen when errors show
-;; (defscreen blank-screen
-;;   :on-render
-;;   (fn [screen entities]
-;;     (clear!)
-;;     (ui/label "Error!" (color :white))))
+
+(defscreen blank-screen
+  :on-render
+  (fn [screen entities]
+    (clear!)
+    (ui/label "Error!" (color :white))
+    (render! screen)))
+
+(set-screen-wrapper! (fn [screen screen-fn]
+                       (try (screen-fn)
+                         (catch Exception e
+                           (.printStackTrace e)
+                           (set-screen! mei-game blank-screen)))))
 
 
 (defscreen main-screen
@@ -60,7 +60,8 @@
 
   :on-resize
   (fn [{:keys [width height] :as screen} entities]
-    (height! screen util/vertical-tiles)))
+    (height! screen 10)))
+
 
 (defscreen text-screen
   :on-show
@@ -80,7 +81,8 @@
 
   :on-resize
   (fn [screen entities]
-    (height! screen 300)))
+    (height! screen 500))
+  )
 
 (defgame mei-game
   :on-create
@@ -89,12 +91,6 @@
 
 
 
-;; (set-screen-wrapper! (fn [screen screen-fn]
-;;                        (try (screen-fn)
-;;                          (catch Exception e
-;;                            (.printStackTrace e)
-;;                            (set-screen! mei-game blank-screen)))))
-
 
 ;;;; repl'ing
 
@@ -102,6 +98,10 @@
 
 ;; (mei.core.desktop-launcher/-main)
 
-;; (on-gl (set-screen! mei-game main-screen text-screen))
+(on-gl (set-screen! mei-game main-screen text-screen))
 
-;; (e! identity main-screen :x 0 :y 3)
+;; (e! identity main-screen :x 15 :y 22)
+
+;; (s! main-screen :height 30)
+
+;; (height! main-screen 40)

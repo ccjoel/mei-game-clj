@@ -43,12 +43,12 @@
                            (util/texture-action-coords mei-textures 3 [3 6])
                            :set-play-mode (play-mode :loop-pingpong))
 
-    :width (* 1.5 1)
-    :height (* 1.5 (/ (-> sprite-map :mei :tile-height) (-> sprite-map :mei :tile-width)))
+    :width 1
+    :height (/ (-> sprite-map :mei :tile-height) (-> sprite-map :mei :tile-width))
     :x-velocity 0
     :y-velocity 0
-    :x 10
-    :y 8
+    :x 12
+    :y 28
     :me? true            ; used to filter by player
 ;;     :can-jump? false
     :direction :down))  ; direction determines if it will walk right or left
@@ -56,26 +56,30 @@
 
 ; move character
 (defn move
-  [{:keys [delta-time]} {:keys [x y] :as entity}]  ;can-jump?
+  [{:keys [delta-time] :as screen} {:keys [x y] :as entity}]  ;can-jump?   params screen and entity
 
   ; negative y goes down
   (let [x-velocity (util/get-x-velocity entity)
         y-velocity (util/get-y-velocity entity)
         x-change (* x-velocity delta-time)
         y-change (* y-velocity delta-time)]
-    (if (or (not= 0 x-change) (not= 0 y-change))
-      (assoc entity
-             :x-velocity (util/decelerate x-velocity)
-             :y-velocity (util/decelerate y-velocity)
-             :x-change x-change
-             :y-change y-change
-             :x (+ x x-change)
-             :y (+ y y-change)
-;;              :can-jump? (if (> y-velocity 0) false can-jump?)
-        )
-      entity)
 
-    ))
+    ;;     (position! screen (entity :x) (entity :y))
+
+    (if (or (not= 0 x-change) (not= 0 y-change))
+      (let [updated-entity (assoc entity
+                             :x-velocity (util/decelerate x-velocity)
+                             :y-velocity (util/decelerate y-velocity)
+                             :x-change x-change
+                             :y-change y-change
+                             :x (+ x x-change)
+                             :y (+ y y-change)
+                             ;;              :can-jump? (if (> y-velocity 0) false can-jump?)
+                             )]
+        (when (or (not (= (:x updated-entity) (:x entity))) (not (= (:y updated-entity) (:y entity))))
+          (println "Mei position | " "X:" (:x updated-entity) "Y:" (:y updated-entity)))
+        updated-entity)
+      entity)))
 
 ; animate character
 (defn animate
