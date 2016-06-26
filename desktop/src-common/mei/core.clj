@@ -60,7 +60,7 @@
 
   :on-resize
   (fn [{:keys [width height] :as screen} entities]
-    (height! screen 10)))
+    (height! screen 6)))
 
 
 (defscreen text-screen
@@ -81,14 +81,13 @@
 
   :on-resize
   (fn [screen entities]
-    (height! screen 500))
-  )
+    (height! screen 500)))
+
 
 (defgame mei-game
   :on-create
   (fn [this]
     (set-screen! this main-screen text-screen)))
-
 
 
 
@@ -98,7 +97,7 @@
 
 ;; (mei.core.desktop-launcher/-main)
 
-(on-gl (set-screen! mei-game main-screen text-screen))
+;; (on-gl (set-screen! mei-game main-screen text-screen))
 
 ;; (e! identity main-screen :x 15 :y 22)
 

@@ -8,14 +8,14 @@
   [mei-textures] ; vector of [rows [cols]]
   (println "creating mei frames...")
 
-  (let [first-texture (util/texture-coords mei-textures [1 0])]
+  (let [first-texture (util/texture-coords mei-textures [0 1])]
 
   (assoc first-texture
     ; assoc more frames
     :stand-up first-texture
-    :stand-right (util/texture-coords mei-textures [1 0])
-    :stand-down (util/texture-coords mei-textures [1 2])
-    :stand-left (util/texture-coords mei-textures [3 0])
+    :stand-right (util/texture-coords mei-textures [1 1])
+    :stand-down (util/texture-coords mei-textures [2 1])
+    :stand-left (util/texture-coords mei-textures [3 1])
 
     :jump-right (util/texture-coords mei-textures [3 16])
     :jump-left (texture (util/texture-coords mei-textures [3 16]) :flip true false)
@@ -43,8 +43,8 @@
                            (util/texture-action-coords mei-textures 3 [3 6])
                            :set-play-mode (play-mode :loop-pingpong))
 
-    :width 1
-    :height (/ (-> sprite-map :mei :tile-height) (-> sprite-map :mei :tile-width))
+    :width 0.8
+    :height (* (/ (-> sprite-map :mei :tile-height) (-> sprite-map :mei :tile-width)) 0.8)
     :x-velocity 0
     :y-velocity 0
     :x 12
