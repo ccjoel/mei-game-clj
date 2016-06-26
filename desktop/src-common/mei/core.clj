@@ -34,6 +34,7 @@
 (defscreen main-screen
   :on-show
   (fn [screen entities]
+    (music "home-music.mp3" :play :set-looping true)
     (->> (orthogonal-tiled-map "mei-home.tmx" (/ 1 util/pixels-per-tile))
          (update! screen :timeline [] :camera (orthographic) :renderer))
     (let [sheet (texture "mei.png")
