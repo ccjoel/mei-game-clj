@@ -100,7 +100,7 @@
 
 ;; (on-gl (set-screen! mei-game main-screen text-screen))
 
-;; (e! identity main-screen :x 15 :y 22)
+;; (e! identity main-screen :x 19 :y 7.2)
 
 ;; (s! main-screen :height 30)
 

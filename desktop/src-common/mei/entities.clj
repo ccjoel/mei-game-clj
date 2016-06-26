@@ -47,8 +47,8 @@
     :height (* (/ (-> sprite-map :mei :tile-height) (-> sprite-map :mei :tile-width)) 0.8)
     :x-velocity 0
     :y-velocity 0
-    :x 12
-    :y 28
+    :x 19
+    :y 7
     :me? true            ; used to filter by player
 ;;     :can-jump? false
     :direction :down))  ; direction determines if it will walk right or left
