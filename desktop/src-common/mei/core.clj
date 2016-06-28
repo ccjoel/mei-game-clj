@@ -1,7 +1,7 @@
 (ns mei.core
   (:require [play-clj.core :as play]
-            [play-clj.g2d :as g2d]                       ;funcs for 2D games
-            [play-clj.ui :as ui]                         ;ui code (labels.. etc)
+            [play-clj.g2d :as g2d]                       ; funcs for 2D games
+            [play-clj.ui :as ui]                         ; ui code (labels.. etc)
             [mei.constants :as const]
             [play-clj.repl :refer [e e! s s!]]           ; remove on prod
             [mei.entities :as me]
@@ -14,19 +14,12 @@
     (when const/DEBUG_ON (println "New height: " new-height))
     (play/height! screen new-height)))
 
-(defn- move-health [entities x y]
-  (map (fn [entity]
-         (when (:health? entity) (assoc entity :x x :y x)))
-       entities))
-
 (defn update-screen!
   "Updates screen / camera to follow player when moving around"
   [screen entities]
   (doseq [{:keys [x y height player?]} entities] ; doseq for side effects, for to return values
     (when player?
-      (play/position! screen x y)
-;;       (move-health entities x y)
-      ))
+      (play/position! screen x y)))
   entities)
 
 (play/defscreen blank-screen ; screen to show when errors present
@@ -51,7 +44,7 @@
     (me/create mei-images)))
 
 (defn- create-player-health []
-  (assoc (g2d/texture "heart.png") :x 18 :y 13 :width 1 :height 1 :health? true))
+  (assoc (g2d/texture "heart.png") :x 1 :y 265 :health? true :width 35 :height 30))
 
 (play/defscreen main-screen
   :on-show
@@ -59,9 +52,9 @@
     (when (not const/DEBUG_ON) (play/music "home-music.mp3" :play :set-looping true))
     (->> (play/orthogonal-tiled-map "mei-home.tmx" (/ 1 util/pixels-per-tile))  ; insert this tiled map as the renderer for camera below
          (play/update! screen :timeline [] :camera (play/orthographic) :renderer))
-    (let [player (create-player-sprites)
-          player-health (create-player-health)]
-      [player player-health]))
+    (let [player (create-player-sprites)]
+      ; vector, so that we may add more entities later
+      [player]))
 
   :on-render
   (fn [screen entities]
@@ -97,9 +90,8 @@
   :on-show
   (fn [screen entities]
     (play/update! screen :camera (play/orthographic) :renderer (play/stage))
-    (assoc (ui/label "0" (play/color :white))
-      :id :fps
-      :x 5))
+    [(assoc (ui/label "0" (play/color :white)) :id :fps :x 5)
+     (create-player-health)])
 
   :on-render
   (fn [screen entities]
@@ -111,7 +103,7 @@
 
   :on-resize
   (fn [screen entities]
-    (play/height! screen 500))) ; TODO: debug this height
+    (play/height! screen 300))) ; TODO: debug this height
 
 
 (play/defgame mei-game
@@ -127,11 +119,13 @@
 
 ;; (mei.core.desktop-launcher/-main)
 
-(e! :health? main-screen :x 13 :y 10)
+;; (e! :health? text-screen :width 35 :height 30)
 
 ;; (s! main-screen :height 30)
 
 ;; (play/height! main-screen 40)
 
 ; after recovering from errors...
-(play-clj.core/on-gl (play-clj.core/set-screen! mei-game main-screen text-screen))
+;; (play-clj.core/on-gl (play-clj.core/set-screen! mei-game main-screen text-screen))
+
+;; (-> text-screen :entities deref)
