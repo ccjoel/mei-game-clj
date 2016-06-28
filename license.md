@@ -29,3 +29,8 @@ Author: Sharm
 URL: http://opengameart.org/content/tiny-16-basic
 License: https://creativecommons.org/licenses/by/3.0/
          http://opengameart.org/content/oga-by-30-faq
+
+---------------
+Author: NicoleMarieProductions
+URL: http://opengameart.org/content/heart-1616
+License: https://creativecommons.org/licenses/by/3.0/

@@ -37,6 +37,8 @@
                                  (g2d/texture (aget tiles row col))))))]
     (me/create mei-images)))
 
+(defn- create-player-health []
+  (assoc (g2d/texture "heart.png") :x 21 :y 11 :width 1 :height 1 :health? true))
 
 (play/defscreen main-screen
   :on-show
@@ -44,7 +46,9 @@
     (when (not const/DEBUG_ON) (play/music "home-music.mp3" :play :set-looping true))
     (->> (play/orthogonal-tiled-map "mei-home.tmx" (/ 1 util/pixels-per-tile))  ; insert this tiled map as the renderer for camera below
          (play/update! screen :timeline [] :camera (play/orthographic) :renderer))
-    (create-player-sprites))
+    (let [player (create-player-sprites)
+          player-health (create-player-health)]
+      [player player-health]))
 
   :on-render
   (fn [screen entities]
@@ -53,10 +57,12 @@
       (if (play/key-pressed? :r)
         (play/rewind! screen 2)
         (map (fn [entity]
-               (->> entity
-                    (me/move screen)
-                    (me/prevent-move screen)
-                    (me/animate screen)))
+               (if (:player? entity)
+                 (->> entity
+                      (me/move screen)
+                      (me/prevent-move screen)
+                      (me/animate screen))
+                 entity))
              entities))
       (play/render! screen)
       (update-screen! screen)))
@@ -65,7 +71,9 @@
   :on-key-down
   (fn [screen entities]
     (cond
-      (play/key-pressed? :h) (play/app! :post-runnable #(play/set-screen! mei-game main-screen text-screen))))
+      (play/key-pressed? :h) (play/app! :post-runnable #(play/set-screen! mei-game main-screen text-screen))
+      (play/key-pressed? :o) (play/height! screen (inc (play/height screen)))
+      (play/key-pressed? :i) (play/height! screen (dec (play/height screen)))))
 
   :on-resize
   (fn [{:keys [width height] :as screen} entities]
