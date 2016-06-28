@@ -1,5 +1,5 @@
 (ns mei.util
-  (:require [play-clj.core :refer :all]))
+  (:require [play-clj.core :as play]))
 
 (def ^:const vertical-tiles 43)
 (def ^:const pixels-per-tile 16)
@@ -19,20 +19,20 @@
 
 
 (defn get-x-velocity
-  [{:keys [me? x-velocity]}]
-  (if me?
+  [{:keys [player? x-velocity]}]
+  (if player?
     (cond
-      (key-pressed? :dpad-left)   (- max-velocity)
-      (key-pressed? :dpad-right)  max-velocity
+      (play/key-pressed? :dpad-left)   (- max-velocity)
+      (play/key-pressed? :dpad-right)  max-velocity
       :else                       x-velocity)
     x-velocity))
 
 (defn get-y-velocity
-  [{:keys [me? y-velocity]}]
-  (if me?
+  [{:keys [player? y-velocity]}]
+  (if player?
     (cond
-      (key-pressed? :dpad-down)   (- max-velocity)
-      (key-pressed? :dpad-up)  max-velocity
+      (play/key-pressed? :dpad-down)   (- max-velocity)
+      (play/key-pressed? :dpad-up)  max-velocity
       :else                       y-velocity)
     y-velocity))
 
@@ -52,10 +52,10 @@
 ; if player is touching a tile, get it (by x , y coordinates)
 (defn get-touching-tile
   [screen {:keys [x y width height]} & layer-names]
-  (let [layers (map #(tiled-map-layer screen %) layer-names)]
+  (let [layers (map #(play/tiled-map-layer screen %) layer-names)]
     (->> (for [tile-x (range (int x) (+ x width))
                tile-y (range (int y) (+ y height))]
-           (some #(when (tiled-map-cell % tile-x tile-y)
+           (some #(when (play/tiled-map-cell % tile-x tile-y)
                     [tile-x tile-y])
                  layers))
          (drop-while nil?)
