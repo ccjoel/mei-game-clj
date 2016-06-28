@@ -1,48 +1,17 @@
-{
-  :mei {
-         :spritesheet-width 864
-         :spritesheet-height 256
-         :tile-cols 17
-         :tile-rows 8
-         :tile-width 24
-         :tile-height 32
-         :frame-set-count nil
-         :frames-count 136
+{:mei {:spritesheet-width 864
+       :spritesheet-height 256
+       :tile-cols 17
+       :tile-rows 8
+       :tile-width 24
+       :tile-height 32
+       :frame-set-count nil
+       :frames-count 136}
 
-         :frames {
-                   :stand {
-                            :up [0 1]
-                            :right [1 0]
-                            :down [1 2]
-                            :left [3 0]
-                            }
-                   :walk {
-                           :up []
-                           :right [1 [0 3]]
-                           :down []
-                           :left  [3 [0 3]]
-                           }
-                   :run {
-                          :up []
-                          :right [1 [3 6]]
-                          :down []
-                          :left [3 [3 6]]
-                          }
-                   :jump {
-                           :up []
-                           :right [3 16]
-                           :down []
-                           }
-                   :attack {}
-                   }
-         }
+ :items []
 
-  :items []
+ :enemies []
 
-  :enemies []
+ :allies []
 
-  :allies []
-
-  :levels []
-
-  }
+ :levels []
+ }

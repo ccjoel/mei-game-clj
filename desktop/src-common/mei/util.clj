@@ -49,7 +49,7 @@
     direction))
 
 
-; if char is touching a tile, get it (by x / y)
+; if player is touching a tile, get it (by x , y coordinates)
 (defn get-touching-tile
   [screen {:keys [x y width height]} & layer-names]
   (let [layers (map #(tiled-map-layer screen %) layer-names)]

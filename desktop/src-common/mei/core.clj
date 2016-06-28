@@ -2,7 +2,7 @@
   (:require [play-clj.core :as play :refer :all]
             [play-clj.g2d :as g2d :refer :all]   ;funcs for 2D games
             [play-clj.ui :as ui]  ;ui code (labels.. etc)
-            [mei.constants :refer [sprite-map]]
+            [mei.constants :refer [sprite-map DEBUG_ON]]
             [play-clj.repl :refer [e e! s s!]]
             [mei.entities :as me]
             [mei.util :as util]))
@@ -13,36 +13,39 @@
   "Updates screen / camera to follow player when moving around"
   [screen entities]
   (doseq [{:keys [x y height me?]} entities] ; doseq for side effects, for to return values
-    (when me? (position! screen x y)))
+    (when me? (play/position! screen x y)))
   entities)
 
 
 (defscreen blank-screen ; screen to show when errors present
   :on-render
   (fn [screen entities]
-    (clear!)
+    (play/clear!)
     (ui/label "Error!" (color :white))
-    (render! screen)))
+    (play/render! screen)))
 
 (set-screen-wrapper! (fn [screen screen-fn]
                        (try (screen-fn)
                          (catch Exception e
                            (.printStackTrace e)
-                           (set-screen! mei-game blank-screen)))))
+                           (play/set-screen! mei-game blank-screen)))))
+
+(defn- create-player-sprites []
+  (let [sheet (texture "mei.png")
+        tiles (texture! sheet :split (-> sprite-map :mei :tile-width) (-> sprite-map :mei :tile-height))
+        mei-images (vec (for [row (range (-> sprite-map :mei :tile-rows))]
+                          (vec (for [col (range (-> sprite-map :mei :tile-cols))]
+                                 (texture (aget tiles row col))))))]
+    (me/create mei-images)))
 
 
 (defscreen main-screen
   :on-show
   (fn [screen entities]
-    (music "home-music.mp3" :play :set-looping true)
+    (when (not DEBUG_ON) (music "home-music.mp3" :play :set-looping true))
     (->> (orthogonal-tiled-map "mei-home.tmx" (/ 1 util/pixels-per-tile))  ; insert this tiled map as the renderer for camera below
          (update! screen :timeline [] :camera (orthographic) :renderer))
-    (let [sheet (texture "mei.png")
-          tiles (texture! sheet :split (-> sprite-map :mei :tile-width) (-> sprite-map :mei :tile-height))
-          mei-images (vec (for [row (range (-> sprite-map :mei :tile-rows))]
-                            (vec (for [col (range (-> sprite-map :mei :tile-cols))]
-                                   (texture (aget tiles row col))))))]
-      (me/create mei-images)))
+    (create-player-sprites))
 
   :on-render
   (fn [screen entities]
@@ -63,7 +66,7 @@
   :on-key-down
   (fn [screen entities]
     (cond
-      (is-pressed? :h) (app! :post-runnable #(set-screen! mei-game main-screen text-screen))))
+      (key-pressed? :h) (app! :post-runnable #(set-screen! mei-game main-screen text-screen))))
 
   :on-resize
   (fn [{:keys [width height] :as screen} entities]
@@ -88,7 +91,7 @@
 
   :on-resize
   (fn [screen entities]
-    (height! screen 500))) ;check this height
+    (height! screen 500))) ; TODO: debug this height
 
 
 (defgame mei-game

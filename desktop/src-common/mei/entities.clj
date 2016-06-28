@@ -48,11 +48,10 @@
     :x-velocity 0
     :y-velocity 0
     :x 19
-    :y 7
+    :y 6
     :me? true            ; used to filter by player
-;;     :can-jump? false
-    :direction :down))  ; direction determines if it will walk right or left
-)
+    :health 5
+    :direction :down)))
 
 ; move character
 (defn move
@@ -76,8 +75,10 @@
                              :y (+ y y-change)
                              ;;              :can-jump? (if (> y-velocity 0) false can-jump?)
                              )]
-        (when (or (not (= (:x updated-entity) (:x entity))) (not (= (:y updated-entity) (:y entity))))
-          (println "Mei position | " "X:" (:x updated-entity) "Y:" (:y updated-entity)))
+        (when DEBUG_ON
+          (when (or (not (= (:x updated-entity) (:x entity))) (not (= (:y updated-entity) (:y entity))))
+            (println "Mei position | " "X:" (:x updated-entity) "Y:" (:y updated-entity))))
+
         updated-entity)
       entity)))
 
@@ -92,7 +93,6 @@
   (let [direction (util/get-direction entity)]
     (merge entity
            (cond
-
              ; jump related logic
              (not= y-velocity 0)
 ;;              (if (= direction :right) jump-right jump-left)
