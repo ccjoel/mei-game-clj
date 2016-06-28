@@ -1,14 +1,11 @@
 (ns mei.util
   (:require [play-clj.core :as play]))
 
-(def ^:const vertical-tiles 43)
 (def ^:const pixels-per-tile 16)
 (def ^:const duration 0.15)
 (def ^:const damping 2)
 (def ^:const max-velocity 7)
-(def ^:const max-jump-velocity (* max-velocity 4))
 (def ^:const deceleration 0.8)
-;; (def ^:const gravity -2.5)
 
 (defn decelerate
   [velocity]

@@ -2,7 +2,7 @@
   (:require [play-clj.core :as play]
             [play-clj.g2d :as g2d]                       ;funcs for 2D games
             [play-clj.ui :as ui]                         ;ui code (labels.. etc)
-            [mei.constants :refer [sprite-map DEBUG_ON]]
+            [mei.constants :as const]
             [play-clj.repl :refer [e e! s s!]]           ; remove on prod
             [mei.entities :as me]
             [mei.util :as util]))
@@ -31,9 +31,9 @@
 
 (defn- create-player-sprites []
   (let [sheet (g2d/texture "mei.png")
-        tiles (g2d/texture! sheet :split (-> sprite-map :mei :tile-width) (-> sprite-map :mei :tile-height))
-        mei-images (vec (for [row (range (-> sprite-map :mei :tile-rows))]
-                          (vec (for [col (range (-> sprite-map :mei :tile-cols))]
+        tiles (g2d/texture! sheet :split (-> const/sprite-map :mei :tile-width) (-> const/sprite-map :mei :tile-height))
+        mei-images (vec (for [row (range (-> const/sprite-map :mei :tile-rows))]
+                          (vec (for [col (range (-> const/sprite-map :mei :tile-cols))]
                                  (g2d/texture (aget tiles row col))))))]
     (me/create mei-images)))
 
@@ -41,7 +41,7 @@
 (play/defscreen main-screen
   :on-show
   (fn [screen entities]
-    (when (not DEBUG_ON) (play/music "home-music.mp3" :play :set-looping true))
+    (when (not const/DEBUG_ON) (play/music "home-music.mp3" :play :set-looping true))
     (->> (play/orthogonal-tiled-map "mei-home.tmx" (/ 1 util/pixels-per-tile))  ; insert this tiled map as the renderer for camera below
          (play/update! screen :timeline [] :camera (play/orthographic) :renderer))
     (create-player-sprites))

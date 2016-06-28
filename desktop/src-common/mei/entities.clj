@@ -2,7 +2,7 @@
   (:require [play-clj.core :as play]
             [play-clj.g2d :as g2d]
             [mei.util :as util]
-            [mei.constants :refer [sprite-map DEBUG_ON]]))
+            [mei.constants :as const]))
 
 (defn- animated-texture [mei-textures col rows]
   (g2d/animation util/duration
@@ -11,7 +11,7 @@
 
 (defn create
   [mei-textures] ; vector of nxn = rows x columns
-  (when DEBUG_ON (println "creating mei frames..."))
+  (when const/DEBUG_ON (println "creating mei frames..."))
 
   (let [first-texture (util/texture-coords mei-textures [0 1])]
     (assoc first-texture
@@ -23,17 +23,8 @@
       :run-right   (animated-texture mei-textures 1 [3 6])
       :run-down    (animated-texture mei-textures 2 [3 6])
       :run-left    (animated-texture mei-textures 3 [3 6])
-;;       :jump-right (util/texture-coords mei-textures [3 16])
-;;       :jump-left (g2d/texture (util/texture-coords mei-textures [3 16]) :flip true false)
-
-;;       :walk-right (g2d/animation util/duration
-;;                                  (util/texture-action-coords mei-textures 1 [0 3])
-;;                                  :set-play-mode (g2d/play-mode :loop-pingpong))
-;;       :walk-left (g2d/animation util/duration
-;;                                 (util/texture-action-coords mei-textures 3 [0 3])
-;;                                 :set-play-mode (g2d/play-mode :loop-pingpong))
       :width 0.8
-      :height (* (/ (-> sprite-map :mei :tile-height) (-> sprite-map :mei :tile-width)) 0.8)
+      :height (* (/ (-> const/sprite-map :mei :tile-height) (-> const/sprite-map :mei :tile-width)) 0.8)
       :x-velocity 0
       :y-velocity 0
       :x 19
@@ -42,6 +33,10 @@
       :health 5
       :direction :down)))
 
+;; (def create-enemy
+;;   [textures]
+
+;;   )
 
 ; move character
 (defn move
@@ -60,7 +55,7 @@
                              :y-change y-change
                              :x (+ x x-change)
                              :y (+ y y-change))]
-        (when DEBUG_ON
+        (when const/DEBUG_ON
           (when (or (not (= (:x updated-entity) (:x entity))) (not (= (:y updated-entity) (:y entity))))
             (println "Mei position | " "X:" (:x updated-entity) "Y:" (:y updated-entity))))
 
@@ -114,3 +109,16 @@
         {:x-velocity 0 :x-change 0 :x old-x})
       (when-let [tile (util/get-touching-tile screen entity-y "walls")]
         {:y-velocity 0 :y-change 0 :y old-y}))))
+
+
+;;;;;;;; more mei properties for later
+
+;;       :jump-right (util/texture-coords mei-textures [3 16])
+;;       :jump-left (g2d/texture (util/texture-coords mei-textures [3 16]) :flip true false)
+
+;;       :walk-right (g2d/animation util/duration
+;;                                  (util/texture-action-coords mei-textures 1 [0 3])
+;;                                  :set-play-mode (g2d/play-mode :loop-pingpong))
+;;       :walk-left (g2d/animation util/duration
+;;                                 (util/texture-action-coords mei-textures 3 [0 3])
+;;                                 :set-play-mode (g2d/play-mode :loop-pingpong))
