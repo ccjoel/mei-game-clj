@@ -9,11 +9,24 @@
 
 (declare mei-game main-screen text-screen) ; declare to use before defining
 
+(defn- update-height [screen update-fn]
+  (let [new-height (update-fn (play/height screen))]
+    (when const/DEBUG_ON (println "New height: " new-height))
+    (play/height! screen new-height)))
+
+(defn- move-health [entities x y]
+  (map (fn [entity]
+         (when (:health? entity) (assoc entity :x x :y x)))
+       entities))
+
 (defn update-screen!
   "Updates screen / camera to follow player when moving around"
   [screen entities]
   (doseq [{:keys [x y height player?]} entities] ; doseq for side effects, for to return values
-    (when player? (play/position! screen x y)))
+    (when player?
+      (play/position! screen x y)
+;;       (move-health entities x y)
+      ))
   entities)
 
 (play/defscreen blank-screen ; screen to show when errors present
@@ -38,7 +51,7 @@
     (me/create mei-images)))
 
 (defn- create-player-health []
-  (assoc (g2d/texture "heart.png") :x 21 :y 11 :width 1 :height 1 :health? true))
+  (assoc (g2d/texture "heart.png") :x 18 :y 13 :width 1 :height 1 :health? true))
 
 (play/defscreen main-screen
   :on-show
@@ -72,8 +85,8 @@
   (fn [screen entities]
     (cond
       (play/key-pressed? :h) (play/app! :post-runnable #(play/set-screen! mei-game main-screen text-screen))
-      (play/key-pressed? :o) (play/height! screen (inc (play/height screen)))
-      (play/key-pressed? :i) (play/height! screen (dec (play/height screen)))))
+      (play/key-pressed? :o) (update-height screen inc)
+      (play/key-pressed? :i) (update-height screen dec)))
 
   :on-resize
   (fn [{:keys [width height] :as screen} entities]
@@ -114,8 +127,11 @@
 
 ;; (mei.core.desktop-launcher/-main)
 
-;; (e! identity main-screen :x 19 :y 7.2)
+(e! :health? main-screen :x 13 :y 10)
 
 ;; (s! main-screen :height 30)
 
 ;; (play/height! main-screen 40)
+
+; after recovering from errors...
+(play-clj.core/on-gl (play-clj.core/set-screen! mei-game main-screen text-screen))
