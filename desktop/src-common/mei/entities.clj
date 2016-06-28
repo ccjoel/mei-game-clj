@@ -2,11 +2,11 @@
   (:require [play-clj.core :refer :all]
             [play-clj.g2d :refer :all]
             [mei.util :as util]
-            [mei.constants :refer [sprite-map]]))
+            [mei.constants :refer [sprite-map DEBUG_ON]]))
 
 (defn create
   [mei-textures] ; vector of [rows [cols]]
-  (println "creating mei frames...")
+  (when DEBUG_ON (println "creating mei frames..."))
 
   (let [first-texture (util/texture-coords mei-textures [0 1])]
 

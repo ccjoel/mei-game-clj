@@ -10,14 +10,14 @@
 (declare mei-game main-screen text-screen) ; declare to use before defining
 
 (defn update-screen!
+  "Updates screen / camera to follow player when moving around"
   [screen entities]
   (doseq [{:keys [x y height me?]} entities] ; doseq for side effects, for to return values
-    (when me?
-      (position! screen x y)))  ; position screen to follow player
+    (when me? (position! screen x y)))
   entities)
 
 
-(defscreen blank-screen
+(defscreen blank-screen ; screen to show when errors present
   :on-render
   (fn [screen entities]
     (clear!)
@@ -48,7 +48,7 @@
   (fn [screen entities]
     (clear!) ;  additional clear! params ...1 1 1 1 these numbers is the rgba background color
     (some->>
-      (if (or (key-pressed? :r))
+      (if (key-pressed? :r)
         (rewind! screen 2)
         (map (fn [entity]
                (->> entity
@@ -60,6 +60,10 @@
       (update-screen! screen)))
 
   ; add on key press to handle restart, forward? and other keyboard behaviors... such as zoom out and in of map (up to a limit)
+  :on-key-down
+  (fn [screen entities]
+    (cond
+      (is-pressed? :h) (app! :post-runnable #(set-screen! mei-game main-screen text-screen))))
 
   :on-resize
   (fn [{:keys [width height] :as screen} entities]
@@ -71,8 +75,8 @@
   (fn [screen entities]
     (update! screen :camera (orthographic) :renderer (stage))
     (assoc (ui/label "0" (color :white))
-           :id :fps
-           :x 5))
+      :id :fps
+      :x 5))
 
   :on-render
   (fn [screen entities]
@@ -84,7 +88,7 @@
 
   :on-resize
   (fn [screen entities]
-    (height! screen 500)))
+    (height! screen 500))) ;check this height
 
 
 (defgame mei-game
