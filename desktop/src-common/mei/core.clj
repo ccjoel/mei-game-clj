@@ -59,7 +59,7 @@
       (render! screen)
       (update-screen! screen)))
 
-  ; add on key press to handle restart, forward? and other keyboard behaviors
+  ; add on key press to handle restart, forward? and other keyboard behaviors... such as zoom out and in of map (up to a limit)
 
   :on-resize
   (fn [{:keys [width height] :as screen} entities]
