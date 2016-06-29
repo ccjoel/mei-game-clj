@@ -121,7 +121,8 @@
   :on-update-health-bar
   (fn [screen entities]
     (concat
-      (remove :health? entities)
+      ;TODO: optimizine this. remove the previous hearts while looping elsewhere, so that we dont loop twice.
+      (remove :health? entities) ; bug here. sometimes hearts get removed forever from screen.
       (create-player-health (:health (:entity screen)))))
 
   :on-resize
