@@ -30,10 +30,10 @@
     (play/render! screen)))
 
 (play/set-screen-wrapper! (fn [screen screen-fn]
-                       (try (screen-fn)
-                         (catch Exception e
-                           (.printStackTrace e)
-                           (play/set-screen! mei-game blank-screen)))))
+                            (try (screen-fn)
+                              (catch Exception e
+                                (.printStackTrace e)
+                                (play/set-screen! mei-game blank-screen)))))
 
 (defn- create-player-sprites []
   (let [sheet (g2d/texture "mei.png")
@@ -45,6 +45,16 @@
 
 (defn- create-player-health []
   (assoc (g2d/texture "heart.png") :x 1 :y 265 :health? true :width 35 :height 30))
+
+(defn create-one-health-heart [x]
+  (assoc (g2d/texture "heart.png") :x x :y 265 :health? true :hid x :width 35 :height 30))
+
+(defn create-player-health [number-hearts]
+  (loop [x 1 hearts '()]
+    (if (= (count hearts) number-hearts)
+      hearts
+      (recur (+ x 10) (cons (create-one-health-heart x) hearts) ))))
+
 
 (play/defscreen main-screen
   :on-show
@@ -90,8 +100,8 @@
   :on-show
   (fn [screen entities]
     (play/update! screen :camera (play/orthographic) :renderer (play/stage))
-    [(assoc (ui/label "0" (play/color :white)) :id :fps :x 5)
-     (create-player-health)])
+    (concat [(assoc (ui/label "0" (play/color :white)) :id :fps :x 5)]
+            (create-player-health 5)))
 
   :on-render
   (fn [screen entities]
@@ -103,7 +113,7 @@
 
   :on-resize
   (fn [screen entities]
-    (play/height! screen 300))) ; TODO: debug this height
+    (play/height! screen 300)))
 
 
 (play/defgame mei-game
