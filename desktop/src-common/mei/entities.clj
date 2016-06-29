@@ -41,26 +41,18 @@
 
 ; move character
 (defn move
-  [{:keys [delta-time] :as screen} {:keys [x y] :as entity}]  ;can-jump?   params screen and entity
-
-  (let [x-velocity (util/get-x-velocity entity)
-        y-velocity (util/get-y-velocity entity)
+  [{:keys [delta-time]} entities {:keys [x y] :as entity}]
+  (let [[x-velocity y-velocity] (util/get-velocity entities entity)
         x-change (* x-velocity delta-time)
         y-change (* y-velocity delta-time)]
-
     (if (or (not= 0 x-change) (not= 0 y-change))
-      (let [updated-entity (assoc entity
-                             :x-velocity (util/decelerate x-velocity)
-                             :y-velocity (util/decelerate y-velocity)
-                             :x-change x-change
-                             :y-change y-change
-                             :x (+ x x-change)
-                             :y (+ y y-change))]
-        (when const/DEBUG_ON
-          (when (or (not (= (:x updated-entity) (:x entity))) (not (= (:y updated-entity) (:y entity))))
-            (println "Mei position | " "X:" (:x updated-entity) "Y:" (:y updated-entity))))
-
-        updated-entity)
+      (assoc entity
+             :x-velocity (util/decelerate x-velocity)
+             :y-velocity (util/decelerate y-velocity)
+             :x-change x-change
+             :y-change y-change
+             :x (+ x x-change)
+             :y (+ y y-change))
       entity)))
 
 
@@ -113,6 +105,7 @@
 (defn hit-player-spike
   [screen {:keys [x y health] :as player}]
   (if (util/get-touching-tile screen player "spikes")
+    ; TODO: v .. add "bleeding" state which makes invulnerable and diff animation for one second. and translate fluidly.
     ; TODO: instead of moving player to random place, hit once and make invulnerable for some seconds?
     (assoc player :health (dec health) :x (- x 5) :y (- y 5))
     player))

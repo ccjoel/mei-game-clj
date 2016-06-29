@@ -78,7 +78,7 @@
         (map (fn [entity]
                (if (:player? entity)
                  (->> entity
-                      (me/move screen)
+                      (me/move screen entities)
                       (me/prevent-move screen)
                       (me/animate screen)
                       (me/hit-player-spike screen))

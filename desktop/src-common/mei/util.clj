@@ -14,36 +14,35 @@
       0
       velocity)))
 
+(defn ^:private get-player-velocity
+  [{:keys [x-velocity y-velocity]}]
+  [(cond
+     (play/key-pressed? :dpad-left)
+     (* -1 max-velocity)
+     (play/key-pressed? :dpad-right)
+     max-velocity
+     :else
+     x-velocity)
+   (cond
+     (play/key-pressed? :dpad-down)
+     (* -1 max-velocity)
+     (play/key-pressed? :dpad-up)
+     max-velocity
+     :else
+     y-velocity)])
 
-(defn get-x-velocity
-  [{:keys [player? x-velocity]}]
-  (if player?
-    (cond
-      (play/key-pressed? :dpad-left)   (- max-velocity)
-      (play/key-pressed? :dpad-right)  max-velocity
-      :else                       x-velocity)
-    x-velocity))
+(defn get-velocity
+  [entities {:keys [player?] :as entity}]
+  (get-player-velocity entity))
 
-(defn get-y-velocity
-  [{:keys [player? y-velocity]}]
-  (if player?
-    (cond
-      (play/key-pressed? :dpad-down)   (- max-velocity)
-      (play/key-pressed? :dpad-up)  max-velocity
-      :else                       y-velocity)
-    y-velocity))
-
-
-; direction of movement
 (defn get-direction
   [{:keys [x-velocity y-velocity direction]}]
   (cond
-    (> x-velocity 0) :right
-    (< x-velocity 0) :left
-    (> y-velocity 0) :up
-    (< y-velocity 0) :down
-    :else
-    direction))
+    (not= y-velocity 0)
+    (if (> y-velocity 0) :up :down)
+    (not= x-velocity 0)
+    (if (> x-velocity 0) :right :left)
+    :else direction))
 
 
 ; if player is touching a tile, get it (by x , y coordinates)
