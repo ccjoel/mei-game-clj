@@ -43,9 +43,6 @@
                                  (g2d/texture (aget tiles row col))))))]
     (me/create mei-images)))
 
-(defn- create-player-health []
-  (assoc (g2d/texture "heart.png") :x 1 :y 265 :health? true :width 35 :height 30))
-
 (defn create-one-health-heart [x]
   (assoc (g2d/texture "heart.png") :x x :y 265 :health? true :hid x :width 35 :height 30))
 
@@ -69,6 +66,8 @@
   :on-render
   (fn [screen entities]
     (play/clear!) ;  additional clear! params ...1 1 1 1 these numbers is the rgba background color
+    (let [mei-player (play/find-first :player? entities)]
+      (play/screen! text-screen :on-update-health-bar :entity mei-player))
     (some->>
       (if (play/key-pressed? :r)
         (play/rewind! screen 2)
@@ -100,8 +99,7 @@
   :on-show
   (fn [screen entities]
     (play/update! screen :camera (play/orthographic) :renderer (play/stage))
-    (concat [(assoc (ui/label "0" (play/color :white)) :id :fps :x 5)]
-            (create-player-health 5)))
+    (assoc (ui/label "0" (play/color :white)) :id :fps :x 5))
 
   :on-render
   (fn [screen entities]
@@ -110,6 +108,13 @@
              :fps (doto entity (ui/label! :set-text (str (play/game :fps))))
              entity))
          (play/render! screen)))
+
+  ; custom function that is invoked in main-screen
+  :on-update-health-bar
+  (fn [screen entities]
+    (concat
+      (remove :health? entities)
+      (create-player-health (:health (:entity screen)))))
 
   :on-resize
   (fn [screen entities]
@@ -129,7 +134,7 @@
 
 ;; (mei.core.desktop-launcher/-main)
 
-;; (e! :health? text-screen :width 35 :height 30)
+;; (e! :player? main-screen :health 10)
 
 ;; (s! main-screen :height 30)
 
