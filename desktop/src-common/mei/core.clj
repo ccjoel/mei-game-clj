@@ -9,11 +9,13 @@
 
 (declare mei-game main-screen text-screen) ; declare to use before defining
 
+; move to util
 (defn- update-height [screen update-fn]
   (let [new-height (update-fn (play/height screen))]
     (when const/DEBUG_ON (println "New height: " new-height))
     (play/height! screen new-height)))
 
+;move to util
 (defn update-screen!
   "Updates screen / camera to follow player when moving around"
   [screen entities]
@@ -43,9 +45,11 @@
                                  (g2d/texture (aget tiles row col))))))]
     (me/create mei-images)))
 
+; move to util
 (defn create-one-health-heart [x]
   (assoc (g2d/texture "heart.png") :x x :y 265 :health? true :hid x :width 35 :height 30))
 
+; move to util
 (defn create-player-health [number-hearts]
   (loop [x 1 hearts '()]
     (if (= (count hearts) number-hearts)

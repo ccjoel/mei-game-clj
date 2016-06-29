@@ -4,6 +4,7 @@
             [mei.util :as util]
             [mei.constants :as const]))
 
+; move to util
 (defn- animated-texture [mei-textures col rows]
   (g2d/animation util/duration
                  (util/texture-action-coords mei-textures col rows)
