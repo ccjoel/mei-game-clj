@@ -101,18 +101,20 @@
   (let [old-x (- x x-change)
         old-y (- y y-change)
         entity-x (assoc entity :y old-y)
-        entity-y (assoc entity :x old-x)
-;;         up? (> y-change 0)
-        ]
+        entity-y (assoc entity :x old-x)]
     (merge
       entity
       (when (util/get-touching-tile screen entity-x "walls")
         {:x-velocity 0 :x-change 0 :x old-x})
-
       (when-let [tile (util/get-touching-tile screen entity-y "walls")]
         {:y-velocity 0 :y-change 0 :y old-y}))))
 
-
+(defn hit-player-spike
+  [screen {:keys [x y health] :as player}]
+  (if (util/get-touching-tile screen player "spikes")
+    ; TODO: instead of moving player to random place, hit once and make invulnerable for some seconds?
+    (assoc player :health (dec health) :x (- x 5) :y (- y 5))
+    player))
 
 ;;;;;;;; more mei properties for later
 

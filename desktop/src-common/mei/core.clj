@@ -76,7 +76,8 @@
                  (->> entity
                       (me/move screen)
                       (me/prevent-move screen)
-                      (me/animate screen))
+                      (me/animate screen)
+                      (me/hit-player-spike screen))
                  entity))
              entities))
       (play/render! screen)
