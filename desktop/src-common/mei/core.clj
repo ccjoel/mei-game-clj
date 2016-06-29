@@ -21,7 +21,10 @@
   [screen entities]
   (doseq [{:keys [x y height player?]} entities] ; doseq for side effects, for to return values
     (when player?
-      (play/position! screen x y)))
+      ; TODO: remove magic numbers by substracting tiles to total tiles to pan camera.
+      (let [new-x (if (and (> x 3.5) (< x 41)) x (.x (play/position screen)))
+            new-y (if (and (> y 3.1) (< y 40)) y (.y (play/position screen)))]
+        (play/position! screen new-x new-y))))
   entities)
 
 (play/defscreen blank-screen ; screen to show when errors present
