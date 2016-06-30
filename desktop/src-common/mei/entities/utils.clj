@@ -2,7 +2,8 @@
   (:require  [play-clj.core :as play]
              [play-clj.g2d :as g2d]
              [mei.utils :as utils]
-             [mei.constants :as const]))
+             [mei.constants :as const]
+             [clojure.pprint :refer [pprint]]))
 
 (defn animated-texture
   "[Side effects] Returns an animation out of multiple textures and col/rows describing the spritesheet 'coordinates'."
@@ -21,8 +22,8 @@
 
 (defn get-touching-tile
   "If a character (player or npc otherwise) is touching a tile, get it (by x , y coordinates)"
-  [screen {:keys [x y width height]} & layer-names]
-  (let [layers (map #(play/tiled-map-layer screen %) layer-names)]
+  [screen {:keys [x y width height] :as entity} & layer-names]
+  (if-let [layers (map #(play/tiled-map-layer screen %) layer-names)]
     (->> (for [tile-x (range (int x) (+ x width))
                tile-y (range (int y) (+ y height))]
            (some #(when (play/tiled-map-cell % tile-x tile-y)

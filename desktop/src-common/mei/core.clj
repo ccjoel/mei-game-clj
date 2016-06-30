@@ -48,7 +48,7 @@
   (fn [screen entities]
     (when (not const/DEBUG_ON) (play/music "home-music.mp3" :play :set-looping true))
     (->> (play/orthogonal-tiled-map "mei-home.tmx" (/ 1 const/pixels-per-tile))  ; insert this tiled map as the renderer for camera below
-         (play/update! screen :timeline [] :camera (play/orthographic) :renderer))
+         (play/update! screen :timeline [] :camera (play/orthographic) :current-map :home :renderer))
     ; todo: create player outside of "main screen" so that we may save/load and transfer player from/to other screens
     (let [player (player/create-sprites)]
       [player])) ; vector, so that we may add more entities later
@@ -67,7 +67,8 @@
                       (player/move screen entities)
                       (player/prevent-move screen)
                       (player/animate screen)
-                      (player/hit-spike screen))
+;;                       (player/hit-spike screen)
+                      (player/use-exit? screen))
                  entity))
              entities))
       (play/render! screen)

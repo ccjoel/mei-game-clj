@@ -3,7 +3,8 @@
             [play-clj.g2d :as g2d]
             [mei.constants :as const]
             [mei.util :as util]
-            [mei.entities.utils :as entity-utils]))
+            [mei.entities.utils :as entity-utils]
+            [mei.screens.utils :as screen-utils]))
 
 (defn- get-player-velocity
   "Returns updated [x y] velocities by checking which direction
@@ -146,6 +147,18 @@
     ; TODO: instead of moving player to random place, hit once and make invulnerable for some seconds?
     ; TODO: create a damage-character function that takes care of the rest.. so that we may reuse for mobs as well
     (assoc player :health (dec health) :x (- x 5) :y (- y 5))
+    player))
+
+(defn use-exit?
+  "Makes player exit one \"map\" and enter into another"
+  [screen {:keys [x y health] :as player}]
+  (if (entity-utils/get-touching-tile screen player "exits")
+    (do
+      ; TODO: change house1 with place we're going to
+      (let [renderer (play/orthogonal-tiled-map "house1.tmx" (/ 1 const/pixels-per-tile))]  ; insert this tiled map as the renderer for camera below
+        (play/update! screen :timeline [] :camera (play/orthographic) :renderer renderer :current-map :house)
+        (play/screen! screen :on-resize))
+      (assoc player :x 5))
     player))
 
 
