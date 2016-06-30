@@ -37,12 +37,7 @@
   :on-key-down
   (fn [screen entities]
     (cond
-      (play/key-pressed? :enter)
-
-      (do
-        (println "enter pressed!")
-        (play/screen! main-screen :on-start-main)
-      )))
+      (play/key-pressed? :enter) (play/screen! main-screen :on-start-main)))
 
   :on-resize
   (fn [screen entities]
