@@ -23,7 +23,7 @@
     (when player?
       ; TODO: remove magic numbers by substracting tiles to total tiles to pan camera.
       (let [new-x (if (and (> x 3.5) (< x 41)) x (.x (play/position screen)))
-            new-y (if (and (> y 3.1) (< y 40)) y (.y (play/position screen)))]
+            new-y (if (and (> y 3.1) (< y 40)) y (.y (play/position screen)))] ; TODO: clean getting position screen?
         (play/position! screen new-x new-y))))
   entities)
 

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="14" height="14" tilewidth="16" tileheight="16" nextobjectid="1">
+ <tileset firstgid="1" name="house1" tilewidth="16" tileheight="16" tilecount="4096" columns="64">
+  <image source="more-world.png" width="1024" height="1024"/>
+ </tileset>
+ <tileset firstgid="4097" name="city_inside" tilewidth="16" tileheight="16" tilecount="1536" columns="48">
+  <image source="city_inside.png" width="768" height="512"/>
+ </tileset>
+ <layer name="background" width="14" height="14">
+  <data encoding="base64" compression="zlib">
+   eJydkkkKwkAQRQOOS72E8y5qxIOoUTeSaHIfh8TrOKS9kHt/wy8omghiwyNNVf1OVf+utDyv+gM1UAcN0AQ+OIEHeIKC+3EJEzAFM+q0xrAm/qIJqLOr0/a8LuiBPhiAIRiVxO1X1gL7JViBEKzBBmxL4iF1PvuTXubgDfbgAK6qvwRkaj6Zx9amzJ/BBUSOxihdzDu1tTnzATk6mkLptA8v5hNydzT6f9qHGz0Wn3eORnyIVEzml/ON46vkU/Yv58j8hjO770HyOfvX82Ssdd+e6DLewb/rA4M8VcA=
+  </data>
+ </layer>
+ <layer name="exits" width="14" height="14">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo2B4golMpGEQAADRsAbl
+  </data>
+ </layer>
+ <layer name="walls" width="14" height="14">
+  <data encoding="base64" compression="zlib">
+   eJxbLcTAsAaIWQQYGFiBmA2IV/MDxfgh7Ef8CJwGxOlAnAHEt4F67gAxMngNFH/DD2Ej61sGxMuBeAUQJwswEA2eAdU/B+IXJOqDAQsB6utrFWRgaBPErW8yDn1bgXq24dFHDsggU98MqP+y+CGYEPAGxrMPEJ+A+m8VPwQTAtVAPTVI+l7xQzCxAKTvMBl+BOn7TIa+H0A9AGhSKK4=
+  </data>
+ </layer>
+</map>
