@@ -40,7 +40,7 @@
                                 (.printStackTrace e)
                                 (play/set-screen! mei-game blank-screen)))))
 
-(defn- create-player-sprites []
+(defn create-player-sprites []
   (let [sheet (g2d/texture "mei.png")
         tiles (g2d/texture! sheet :split (-> const/sprite-map :mei :tile-width) (-> const/sprite-map :mei :tile-height))
         mei-images (vec (for [row (range (-> const/sprite-map :mei :tile-rows))]
