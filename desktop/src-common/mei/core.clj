@@ -1,139 +1,104 @@
 (ns mei.core
   (:require [play-clj.core :as play]
-            [play-clj.g2d :as g2d]                       ; funcs for 2D games
-            [play-clj.ui :as ui]                         ; ui code (labels.. etc)
-            [mei.constants :as const]
             [play-clj.repl :refer [e e! s s!]]           ; remove on prod
-            [mei.entities :as me]
-            [mei.util :as util]))
+            [play-clj.g2d :as g2d]
+            [mei.constants :as const]
+            [mei.screens.overlay :refer [overlay-screen]]
+            [mei.screens.error :refer [error-screen]]
+            [mei.entities.player :as player]
+            [mei.screens.utils :as screen-utils]))
 
-(declare mei-game main-screen text-screen) ; declare to use before defining
+(declare mei-game main-screen)
 
-; move to util
-(defn- update-height [screen update-fn]
-  (let [new-height (update-fn (play/height screen))]
-    (when const/DEBUG_ON (println "New height: " new-height))
-    (play/height! screen new-height)))
-
-;move to util
-(defn update-screen!
-  "Updates screen / camera to follow player when moving around"
-  [screen entities]
-  (doseq [{:keys [x y height player?]} entities] ; doseq for side effects, for to return values
-    (when player?
-      ; TODO: remove magic numbers by substracting tiles to total tiles to pan camera.
-      (let [new-x (if (and (> x 3.5) (< x 41)) x (.x (play/position screen)))
-            new-y (if (and (> y 3.1) (< y 40)) y (.y (play/position screen)))] ; TODO: clean getting position screen?
-        (play/position! screen new-x new-y))))
-  entities)
-
-(play/defscreen blank-screen ; screen to show when errors present
-  :on-render
-  (fn [screen entities]
-    (play/clear!)
-    (ui/label "Error!" (play/color :white))
-    (play/render! screen)))
-
+;; TODO: figure out how this works...
 (play/set-screen-wrapper! (fn [screen screen-fn]
                             (try (screen-fn)
                               (catch Exception e
                                 (.printStackTrace e)
-                                (play/set-screen! mei-game blank-screen)))))
+                                (play/set-screen! mei-game error-screen)))))
 
-(defn create-player-sprites []
-  (let [sheet (g2d/texture "mei.png")
-        tiles (g2d/texture! sheet :split (-> const/sprite-map :mei :tile-width) (-> const/sprite-map :mei :tile-height))
-        mei-images (vec (for [row (range (-> const/sprite-map :mei :tile-rows))]
-                          (vec (for [col (range (-> const/sprite-map :mei :tile-cols))]
-                                 (g2d/texture (aget tiles row col))))))]
-    (me/create mei-images)))
+(play/defscreen title-screen
+  :on-show
+  (fn [screen entities]
+    ; TODO: play background music
+    (play/update! screen :renderer (play/stage) :camera (play/orthographic))
+    (assoc (g2d/texture "title-screen.png") :width 350 :height 300)) ;TODO: why 350?
 
-; move to util
-(defn create-one-health-heart [x]
-  (assoc (g2d/texture "heart.png") :x x :y 265 :health? true :hid x :width 35 :height 30))
+  :on-hide
+  (fn [screen entities]
+    ;todo stop music playing before transitioning
+    )
 
-; move to util
-(defn create-player-health [number-hearts]
-  (loop [x 1 hearts '()]
-    (if (= (count hearts) number-hearts)
-      hearts
-      (recur (+ x 10) (cons (create-one-health-heart x) hearts) ))))
+  :on-render
+  (fn [screen entities]
+    (play/clear!)
+    (play/render! screen entities))
 
+  :on-key-down
+  (fn [screen entities]
+    (cond
+      (play/key-pressed? :enter)
+
+      (do
+        (println "enter pressed!")
+        (play/screen! main-screen :on-start-main)
+      )))
+
+  :on-resize
+  (fn [screen entities]
+    (play/height! screen 300)))
 
 (play/defscreen main-screen
   :on-show
   (fn [screen entities]
     (when (not const/DEBUG_ON) (play/music "home-music.mp3" :play :set-looping true))
-    (->> (play/orthogonal-tiled-map "mei-home.tmx" (/ 1 util/pixels-per-tile))  ; insert this tiled map as the renderer for camera below
+    (->> (play/orthogonal-tiled-map "mei-home.tmx" (/ 1 const/pixels-per-tile))  ; insert this tiled map as the renderer for camera below
          (play/update! screen :timeline [] :camera (play/orthographic) :renderer))
-    (let [player (create-player-sprites)]
-      ; vector, so that we may add more entities later
-      [player]))
+    ; todo: create player outside of "main screen" so that we may save/load and transfer player from/to other screens
+    (let [player (player/create-sprites)]
+      [player])) ; vector, so that we may add more entities later
 
   :on-render
   (fn [screen entities]
     (play/clear!) ;  additional clear! params ...1 1 1 1 these numbers is the rgba background color
-    (let [mei-player (play/find-first :player? entities)]
-      (play/screen! text-screen :on-update-health-bar :entity mei-player))
+    (let [mei-player (play/find-first :player? entities)] ; there must be a player
+      (play/screen! overlay-screen :on-update-health-bar :entity mei-player))
     (some->>
       (if (play/key-pressed? :r)
         (play/rewind! screen 2)
         (map (fn [entity]
                (if (:player? entity)
                  (->> entity
-                      (me/move screen entities)
-                      (me/prevent-move screen)
-                      (me/animate screen)
-                      (me/hit-player-spike screen))
+                      (player/move screen entities)
+                      (player/prevent-move screen)
+                      (player/animate screen)
+                      (player/hit-spike screen))
                  entity))
              entities))
       (play/render! screen)
-      (update-screen! screen)))
+      (screen-utils/update-screen! screen)))
 
-  ; add on key press to handle restart, forward? and other keyboard behaviors... such as zoom out and in of map (up to a limit)
   :on-key-down
   (fn [screen entities]
     (cond
-      (play/key-pressed? :h) (play/app! :post-runnable #(play/set-screen! mei-game main-screen text-screen))
-      (play/key-pressed? :o) (update-height screen inc)
-      (play/key-pressed? :i) (update-height screen dec)))
+      ; TODO: create something generic so that other screens may reuse these controls
+      (play/key-pressed? :h) (play/app! :post-runnable #(play/set-screen! mei-game main-screen overlay-screen))
+      (play/key-pressed? :o) (screen-utils/update-height screen inc)
+      (play/key-pressed? :i) (screen-utils/update-height screen dec)))
+
+  :on-start-main
+  (fn [screen entities]
+    (play/set-screen! mei-game main-screen overlay-screen))
 
   :on-resize
   (fn [{:keys [width height] :as screen} entities]
     (play/height! screen 6)))
 
 
-(play/defscreen text-screen
-  :on-show
-  (fn [screen entities]
-    (play/update! screen :camera (play/orthographic) :renderer (play/stage))
-    (assoc (ui/label "0" (play/color :white)) :id :fps :x 5))
-
-  :on-render
-  (fn [screen entities]
-    (->> (for [entity entities]
-           (case (:id entity)
-             :fps (doto entity (ui/label! :set-text (str (play/game :fps))))
-             entity))
-         (play/render! screen)))
-
-  ; custom function that is invoked in main-screen
-  :on-update-health-bar
-  (fn [screen entities]
-    (concat
-      ;TODO: optimizine this. remove the previous hearts while looping elsewhere, so that we dont loop twice.
-      (remove :health? entities) ; bug here. sometimes hearts get removed forever from screen.
-      (create-player-health (:health (:entity screen)))))
-
-  :on-resize
-  (fn [screen entities]
-    (play/height! screen 300)))
-
-
 (play/defgame mei-game
   :on-create
   (fn [this]
-    (play/set-screen! this main-screen text-screen)))
+    (play/set-screen! this title-screen overlay-screen)))
 
 
 
@@ -150,6 +115,6 @@
 ;; (play/height! main-screen 40)
 
 ; after recovering from errors...
-;; (play-clj.core/on-gl (play-clj.core/set-screen! mei-game main-screen text-screen))
+;; (play-clj.core/on-gl (play-clj.core/set-screen! mei-game main-screen overlay-screen))
 
-;; (-> text-screen :entities deref)
+;; (-> overlay-screen :entities deref)
