@@ -154,11 +154,22 @@
   [screen {:keys [x y health] :as player}]
   (if (entity-utils/get-touching-tile screen player "exits")
     (do
-      ; TODO: change house1 with place we're going to
-      (let [renderer (play/orthogonal-tiled-map "house1.tmx" (/ 1 const/pixels-per-tile))]  ; insert this tiled map as the renderer for camera below
-        (play/update! screen :timeline [] :camera (play/orthographic) :renderer renderer :current-map :house)
-        (play/screen! screen :on-resize))
-      (assoc player :x 5))
+      (println "exiting map:" (:current-map screen))
+      ; use switch case
+      (case (:current-map screen)
+        :house
+          (let [renderer (play/orthogonal-tiled-map "mei-home.tmx" (/ 1 const/pixels-per-tile))]  ; insert this tiled map as the renderer for camera below
+            (println "entering map: :home")
+            (play/update! screen :timeline [] :camera (play/orthographic) :renderer renderer :current-map :home))
+        :home
+          (let [renderer (play/orthogonal-tiled-map "house1.tmx" (/ 1 const/pixels-per-tile))]  ; insert this tiled map as the renderer for camera below
+            (println "entering map: :house")
+            (play/update! screen :timeline [] :camera (play/orthographic) :renderer renderer :current-map :house)))
+
+      ; TODO: change house1 with place we're going to...
+
+      (play/screen! screen :on-resize)
+      (assoc player :x 5 :y 3))
     player))
 
 
