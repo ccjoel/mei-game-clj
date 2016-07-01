@@ -106,7 +106,8 @@
     (merge entity
            (cond
              ; animations for running up/down
-             (not= y-velocity 0) (cond
+             (not= y-velocity 0)
+             (cond
                (= direction :up)  (g2d/animation->texture screen run-up)
                (= direction :down)  (g2d/animation->texture screen run-down))
              ; animations for running right/left
@@ -167,7 +168,9 @@
         :house (enter-map "mei-home.tmx" screen :home)
         :home (enter-map "house1.tmx" screen :house))
       (play/screen! screen :on-resize)
-      (assoc player :x 5 :y 3))
+      (case (:current-map screen)
+        :house (assoc player :x 19 :y 6)
+        :home (assoc player :x 5 :y 2.5)))
     player))
 
 

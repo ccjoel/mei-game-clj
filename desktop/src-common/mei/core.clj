@@ -1,6 +1,6 @@
 (ns mei.core
   (:require [play-clj.core :as play]
-            [play-clj.repl :refer [e e! s s!]]           ; remove on prod
+            [play-clj.repl :refer [e e! s s!]]           ; TODO: remove on prod
             [play-clj.g2d :as g2d]
             [mei.constants :as const]
             [mei.screens.overlay :refer [overlay-screen]]
@@ -24,10 +24,10 @@
     (play/update! screen :renderer (play/stage) :camera (play/orthographic))
     (assoc (g2d/texture "title-screen.png") :width 350 :height 300)) ;TODO: why 350?
 
-  :on-hide
-  (fn [screen entities]
+;;   :on-hide
+;;   (fn [screen entities]
     ;todo stop music playing before transitioning
-    )
+;;     )
 
   :on-render
   (fn [screen entities]
@@ -77,7 +77,6 @@
   :on-key-down
   (fn [screen entities]
     (cond
-      ; TODO: create something generic so that other screens may reuse these controls
       (play/key-pressed? :h) (play/app! :post-runnable #(play/set-screen! mei-game main-screen overlay-screen))
       (play/key-pressed? :o) (screen-utils/update-height screen inc)
       (play/key-pressed? :i) (screen-utils/update-height screen dec)))
