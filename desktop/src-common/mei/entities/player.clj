@@ -149,25 +149,21 @@
     (assoc player :health (dec health) :x (- x 5) :y (- y 5))
     player))
 
+(defn- enter-map [tmx-file screen new-map-key]
+  (let [renderer (play/orthogonal-tiled-map tmx-file (/ 1 const/pixels-per-tile))]
+    (when const/DEBUG_ON (println "Entering map: " new-map-key))
+    (play/update! screen :timeline [] :camera (play/orthographic)
+                  :renderer renderer :current-map new-map-key)))
+
 (defn use-exit?
   "Makes player exit one \"map\" and enter into another"
   [screen {:keys [x y health] :as player}]
   (if (entity-utils/get-touching-tile screen player "exits")
     (do
-      (println "exiting map:" (:current-map screen))
-      ; use switch case
+      (when const/DEBUG_ON (println "Exiting map:" (:current-map screen)))
       (case (:current-map screen)
-        :house
-          (let [renderer (play/orthogonal-tiled-map "mei-home.tmx" (/ 1 const/pixels-per-tile))]  ; insert this tiled map as the renderer for camera below
-            (println "entering map: :home")
-            (play/update! screen :timeline [] :camera (play/orthographic) :renderer renderer :current-map :home))
-        :home
-          (let [renderer (play/orthogonal-tiled-map "house1.tmx" (/ 1 const/pixels-per-tile))]  ; insert this tiled map as the renderer for camera below
-            (println "entering map: :house")
-            (play/update! screen :timeline [] :camera (play/orthographic) :renderer renderer :current-map :house)))
-
-      ; TODO: change house1 with place we're going to...
-
+        :house (enter-map "mei-home.tmx" screen :home)
+        :home (enter-map "house1.tmx" screen :house))
       (play/screen! screen :on-resize)
       (assoc player :x 5 :y 3))
     player))
