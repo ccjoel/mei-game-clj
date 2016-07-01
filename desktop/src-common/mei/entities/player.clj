@@ -19,7 +19,6 @@
      (play/key-pressed? :dpad-up)    const/max-velocity
      :else                           y-velocity)])
 
-
 (defn get-velocity
   "Returns velocity for a character. Works on player only, for now."
   [entities {:keys [player?] :as entity}]
@@ -33,13 +32,11 @@
     (not= x-velocity 0)  (if (> x-velocity 0) :right :left)
     :else                direction))
 
-
 (defn create
   "receives an n x n vector of rows x columns, and returns a texture with all
   other texture/animation states as conj'ed properties."
   [mei-textures]
   (when const/DEBUG_ON (println "creating mei frames..."))
-
   (let [first-texture (util/texture-coords mei-textures [0 1])]
     (assoc first-texture
       :stand-up    first-texture
@@ -96,12 +93,9 @@
 
 (defn animate
   "Animates a character on the screen. Receives all the possible animation states."
-  [screen {:keys [x-velocity y-velocity
-                  stand-right stand-left
-                  stand-up stand-down
-                  jump-right jump-left
-                  run-right run-left
-                  run-up run-down] :as entity}]
+  [screen {:keys [x-velocity y-velocity stand-right stand-left
+                  stand-up stand-down jump-right jump-left
+                  run-right run-left run-up run-down] :as entity}]
   (let [direction (get-direction entity)]
     (merge entity
            (cond
@@ -125,7 +119,6 @@
            {:direction direction})))
 
 
-
 (defn prevent-move
   "Prevents character from moving when touching walls."
   [screen {:keys [x y x-change y-change] :as entity}]
@@ -146,10 +139,11 @@
   (if (not (= :home (:current-map screen)))
     player
     (if (entity-utils/get-touching-tile screen player "spikes")
-      ; TODO: v .. add "bleeding" state which makes invulnerable and diff animation for one second. and translate fluidly.
+      ; TODO: v .. add "recovering" state which makes invulnerable and diff animation for one second. and translate fluidly.
       ; TODO: instead of moving player to random place, hit once and make invulnerable for some seconds?
       ; TODO: create a damage-character function that takes care of the rest.. so that we may reuse for mobs as well
-      (assoc player :health (dec health) :x (- x 5) :y (- y 5))
+      ; check direction the player was moving in, and push the opposite direction
+      (assoc player :health (dec health) :x (- x 5) :y (- y 5) :status :recovering)
       player)))
 
 (defn- enter-map [tmx-file screen new-map-key]
@@ -164,6 +158,7 @@
   (if (entity-utils/get-touching-tile screen player "exits")
     (do
       (when const/DEBUG_ON (println "Exiting map:" (:current-map screen)))
+      ; TODO: clean this doublecase / sending play/screen! signal mess
       (case (:current-map screen)
         :house (enter-map "mei-home.tmx" screen :home)
         :home (enter-map "house1.tmx" screen :house))
