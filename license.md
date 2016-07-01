@@ -34,3 +34,8 @@ License: https://creativecommons.org/licenses/by/3.0/
 Author: NicoleMarieProductions
 URL: http://opengameart.org/content/heart-1616
 License: https://creativecommons.org/licenses/by/3.0/
+
+----------------
+Author: Bleddyuffles
+Url: http://opengameart.org/content/dwarf-man
+License: https://creativecommons.org/licenses/by/3.0/ 
