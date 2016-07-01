@@ -142,12 +142,14 @@
 (defn hit-spike
   "Makes player hit items in the environment that cause damage"
   [screen {:keys [x y health] :as player}]
-  (if (entity-utils/get-touching-tile screen player "spikes")
-    ; TODO: v .. add "bleeding" state which makes invulnerable and diff animation for one second. and translate fluidly.
-    ; TODO: instead of moving player to random place, hit once and make invulnerable for some seconds?
-    ; TODO: create a damage-character function that takes care of the rest.. so that we may reuse for mobs as well
-    (assoc player :health (dec health) :x (- x 5) :y (- y 5))
-    player))
+  (if (not (= :home (:current-map screen)))
+    player
+    (if (entity-utils/get-touching-tile screen player "spikes")
+      ; TODO: v .. add "bleeding" state which makes invulnerable and diff animation for one second. and translate fluidly.
+      ; TODO: instead of moving player to random place, hit once and make invulnerable for some seconds?
+      ; TODO: create a damage-character function that takes care of the rest.. so that we may reuse for mobs as well
+      (assoc player :health (dec health) :x (- x 5) :y (- y 5))
+      player)))
 
 (defn- enter-map [tmx-file screen new-map-key]
   (let [renderer (play/orthogonal-tiled-map tmx-file (/ 1 const/pixels-per-tile))]

@@ -67,7 +67,7 @@
                       (player/move screen entities)
                       (player/prevent-move screen)
                       (player/animate screen)
-;;                       (player/hit-spike screen) ; TODO: re add this after checking if there are spikes on map
+                      (player/hit-spike screen)
                       (player/use-exit? screen))
                  entity))
              entities))
