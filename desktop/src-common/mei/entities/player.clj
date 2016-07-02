@@ -200,7 +200,9 @@
     player))
 
 (defn shoot-particle [entities]
-  (let [player (entity-utils/find-id entities :mei)]
-    (conj entities (assoc (g2d/particle-effect "particles/fire.p" :scale-effect 0.003)
+  (let [player (entity-utils/find-id entities :mei)
+        particle (assoc (g2d/particle-effect "particles/fire.p" :scale-effect 0.003)
                      :particle? true :direction (:direction player) :id utils/generate-uuid
-                     :x (:x player) :y (:y player)))))
+                     :x (:x player) :y (:y player))]
+    (pprint particle)
+    (conj entities particle)))

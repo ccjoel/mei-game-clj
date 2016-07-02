@@ -50,22 +50,20 @@
   (play/find-first #(= id (:id %)) entities))
 
 
-(defn update-particle-position [entities particle]
+(defn update-particle-position [particle]
+  (case (:direction particle)
+    :up (assoc particle :y (+ (:y particle) 0.08))
+    :down (assoc particle :y (- (:y particle) 0.08))
+    :right (assoc particle :x (+ (:x particle) 0.08))
+    :left (assoc particle :x (- (:x particle) 0.08))))
 
-       (if (or
-             (< (:x particle) 0)
-             (> (:x particle) const/h-home-tiles)
-             (< (:y particle) 0)
-             (> (:y particle) const/v-home-tiles))
-         (remove particle entities)
-         particle
-         )
-  ;    or particle x > map's width
-  ;    or particle y < map's 0
-  ;    or particle y > map's height
-         ;remove particle from map/entities
-
-;;     ;else
-       ; get direction, and inc/dec x/y depending on it
-  ; return updated entities
+(defn remove-particle-when-done [entities]
+  ;;        (if (or
+;;              (< (:x particle) 0)
+;;              (> (:x particle) const/h-home-tiles)
+;;              (< (:y particle) 0)
+;;              (> (:y particle) const/v-home-tiles))
+;;          entities
+;;          )
+  entities
   )
