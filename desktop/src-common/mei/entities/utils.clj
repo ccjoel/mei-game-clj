@@ -31,3 +31,19 @@
                  layers))
          (drop-while nil?)
          first)))
+
+(defn near-entity?
+  [{:keys [x y id] :as e} e2 min-distance]
+  (and (not= id (:id e2))
+       (nil? (:draw-time e2))
+       (> (:health e2) 0)
+       (< (Math/abs ^double (- x (:x e2))) min-distance)
+       (< (Math/abs ^double (- y (:y e2))) min-distance)))
+
+(defn near-entities?
+  [entities entity min-distance]
+  (some #(near-entity? entity % min-distance) entities))
+
+(defn find-id
+  [entities id]
+  (play/find-first #(= id (:id %)) entities))

@@ -6,6 +6,7 @@
             [mei.entities.utils :as entity-utils]
             [mei.screens.utils :as screen-utils]))
 
+
 (defn- get-player-velocity
   "Returns updated [x y] velocities by checking which direction
   the game pad was pressed in."
@@ -19,10 +20,12 @@
      (play/key-pressed? :dpad-up)    const/max-velocity
      :else                           y-velocity)])
 
+
 (defn get-velocity
   "Returns velocity for a character. Works on player only, for now."
   [entities {:keys [player?] :as entity}]
   (get-player-velocity entity))
+
 
 (defn get-direction
   "Returns a new direction given x and y velocities and a previous direction"
@@ -31,6 +34,7 @@
     (not= y-velocity 0)  (if (> y-velocity 0) :up :down)
     (not= x-velocity 0)  (if (> x-velocity 0) :right :left)
     :else                direction))
+
 
 (defn create
   "receives an n x n vector of rows x columns, and returns a texture with all
@@ -56,8 +60,11 @@
       :x 19
       :y 6
       :player? true
+      :id :mei
       :health 5
+      :recovering 0
       :direction :down)))
+
 
 (defn create-sprites []
   "Parses mei.png spritesheet for all frames using the width/height of a tile to split it."
@@ -121,36 +128,45 @@
 
 (defn prevent-move
   "Prevents character from moving when touching walls."
-  [screen {:keys [x y x-change y-change] :as entity}]
+  [screen entities {:keys [x y x-change y-change] :as entity}]
   (let [old-x (- x x-change)
         old-y (- y y-change)
         entity-x (assoc entity :y old-y)
         entity-y (assoc entity :x old-x)]
-    (merge
-      entity
-      (when (entity-utils/get-touching-tile screen entity-x "walls")
-        {:x-velocity 0 :x-change 0 :x old-x})
-      (when-let [tile (entity-utils/get-touching-tile screen entity-y "walls")]
-        {:y-velocity 0 :y-change 0 :y old-y}))))
+    (merge entity
+           (when (entity-utils/get-touching-tile screen entity-x "walls")
+             {:x-velocity 0 :x-change 0 :x old-x})
+           (when-let [tile (entity-utils/get-touching-tile screen entity-y "walls")]
+             {:y-velocity 0 :y-change 0 :y old-y})
+           (when (and (or (not= 0 x-change) (not= 0 y-change))
+                      (entity-utils/near-entities? entities entity 2))
+             {:x-velocity 0
+              :y-velocity 0
+              :x-change 0
+              :y-change 0
+              :x (- x x-change)
+              :y (- y y-change)}))))
+
 
 (defn hit-spike
   "Makes player hit items in the environment that cause damage"
   [screen {:keys [x y health] :as player}]
-  (if (not (= :home (:current-map screen)))
+  (if (not (= :home (:current-map screen))) ; <- make this more reusable
     player
-    (if (entity-utils/get-touching-tile screen player "spikes")
+    (if (and (= (:recovering player) 0) (entity-utils/get-touching-tile screen player "spikes"))
       ; TODO: v .. add "recovering" state which makes invulnerable and diff animation for one second. and translate fluidly.
-      ; TODO: instead of moving player to random place, hit once and make invulnerable for some seconds?
       ; TODO: create a damage-character function that takes care of the rest.. so that we may reuse for mobs as well
       ; check direction the player was moving in, and push the opposite direction
-      (assoc player :health (dec health) :x (- x 5) :y (- y 5) :status :recovering)
+      (assoc player :health (dec health) :x (- x 2) :y (- y 2) :recovering 20) ; change quantity 20
       player)))
+
 
 (defn- enter-map [tmx-file screen new-map-key]
   (let [renderer (play/orthogonal-tiled-map tmx-file (/ 1 const/pixels-per-tile))]
     (when const/DEBUG_ON (println "Entering map: " new-map-key))
     (play/update! screen :timeline [] :camera (play/orthographic)
                   :renderer renderer :current-map new-map-key)))
+
 
 (defn use-exit?
   "Makes player exit one \"map\" and enter into another"

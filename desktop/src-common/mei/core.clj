@@ -2,11 +2,13 @@
   (:require [play-clj.core :as play]
             [play-clj.repl :refer [e e! s s!]]           ; TODO: remove on prod
             [play-clj.g2d :as g2d]
+            [play-clj.math :refer [rectangle]]
             [mei.constants :as const]
             [mei.screens.overlay :refer [overlay-screen]]
             [mei.screens.error :refer [error-screen]]
             [mei.entities.player :as player]
-            [mei.screens.utils :as screen-utils]))
+            [mei.screens.utils :as screen-utils]
+            [mei.entities.npcs :as npcs]))
 
 (declare mei-game main-screen)
 
@@ -24,10 +26,10 @@
     (play/update! screen :renderer (play/stage) :camera (play/orthographic))
     (assoc (g2d/texture "title-screen.png") :width 350 :height 300)) ;TODO: why 350?
 
-;;   :on-hide
-;;   (fn [screen entities]
-    ;todo stop music playing before transitioning
-;;     )
+  ;;   :on-hide
+  ;;   (fn [screen entities]
+  ;todo stop music playing before transitioning
+  ;;     )
 
   :on-render
   (fn [screen entities]
@@ -43,15 +45,20 @@
   (fn [screen entities]
     (play/height! screen 300)))
 
+(defn- update-player-hit-box [{:keys [player?] :as entity}]
+  (if player?
+    (assoc entity :hit-box (rectangle (:x entity) (:y entity) (:width entity) (:height entity)))
+    entity))
+
 (play/defscreen main-screen
   :on-show
   (fn [screen entities]
     (when (not const/DEBUG_ON) (play/music "home-music.mp3" :play :set-looping true))
     (->> (play/orthogonal-tiled-map "mei-home.tmx" (/ 1 const/pixels-per-tile))  ; insert this tiled map as the renderer for camera below
          (play/update! screen :timeline [] :camera (play/orthographic) :current-map :home :renderer))
-    ; todo: create player outside of "main screen" so that we may save/load and transfer player from/to other screens
-    (let [player (player/create-sprites)]
-      [player])) ; vector, so that we may add more entities later
+    (let [player (player/create-sprites)
+          dwarf (npcs/create-dwarf)]
+      [player dwarf]))
 
   :on-render
   (fn [screen entities]
@@ -65,8 +72,9 @@
                (if (:player? entity)
                  (->> entity
                       (player/move screen entities)
-                      (player/prevent-move screen)
+                      (player/prevent-move screen entities)
                       (player/animate screen)
+                      (update-player-hit-box)
                       (player/hit-spike screen)
                       (player/use-exit? screen))
                  entity))

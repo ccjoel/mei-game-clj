@@ -10,7 +10,7 @@
 (def h-home-tiles 43)
 
 (def pixels-per-tile 16)
-(def duration 0.15)
+(def duration 0.2)
 (def damping 2)
 (def max-velocity 7)
 (def deceleration 0.8)
