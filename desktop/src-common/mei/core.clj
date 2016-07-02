@@ -1,6 +1,6 @@
 (ns mei.core
   (:require [play-clj.core :as play]
-            [play-clj.repl :refer [e e! s s!]]           ; TODO: remove on prod
+;;             [play-clj.repl :refer [e e! s s!]]
             [play-clj.g2d :as g2d]
             [play-clj.math :refer [rectangle]]
             [mei.constants :as const]
@@ -26,11 +26,6 @@
     (play/update! screen :renderer (play/stage) :camera (play/orthographic))
     (assoc (g2d/texture "title-screen.png") :width 350 :height 300)) ;TODO: why 350?
 
-  ;;   :on-hide
-  ;;   (fn [screen entities]
-  ;todo stop music playing before transitioning
-  ;;     )
-
   :on-render
   (fn [screen entities]
     (play/clear!)
@@ -45,10 +40,20 @@
   (fn [screen entities]
     (play/height! screen 300)))
 
+; TODO: clean up- move to player.clj
 (defn- update-player-hit-box [{:keys [player?] :as entity}]
   (if player?
     (assoc entity :hit-box (rectangle (:x entity) (:y entity) (:width entity) (:height entity)))
     entity))
+
+(defn update-recover-stats [{:keys [recovering] :as player}]
+  (if (> recovering 0)
+    (assoc player :recovering (dec recovering))
+    player))
+
+(defn player-fainted? [{:keys [health] :as player}]
+  (when (= health 0) (play/app! :post-runnable #(play/set-screen! mei-game main-screen overlay-screen)))
+  player)
 
 (play/defscreen main-screen
   :on-show
@@ -75,7 +80,9 @@
                       (player/prevent-move screen entities)
                       (player/animate screen)
                       (update-player-hit-box)
+                      (update-recover-stats)
                       (player/hit-spike screen)
+                      (player-fainted?)
                       (player/use-exit? screen))
                  entity))
              entities))

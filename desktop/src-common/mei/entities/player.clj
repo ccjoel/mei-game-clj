@@ -139,7 +139,7 @@
            (when-let [tile (entity-utils/get-touching-tile screen entity-y "walls")]
              {:y-velocity 0 :y-change 0 :y old-y})
            (when (and (or (not= 0 x-change) (not= 0 y-change))
-                      (entity-utils/near-entities? entities entity 2))
+                      (entity-utils/near-entities? entities entity 1.5))
              {:x-velocity 0
               :y-velocity 0
               :x-change 0
@@ -157,7 +157,7 @@
       ; TODO: v .. add "recovering" state which makes invulnerable and diff animation for one second. and translate fluidly.
       ; TODO: create a damage-character function that takes care of the rest.. so that we may reuse for mobs as well
       ; check direction the player was moving in, and push the opposite direction
-      (assoc player :health (dec health) :x (- x 2) :y (- y 2) :recovering 20) ; change quantity 20
+      (assoc player :health (dec health) :x (- x 2) :y (- y 2) :recovering 100) ; change quantity 20
       player)))
 
 
@@ -183,16 +183,3 @@
         :house (assoc player :x 19 :y 6)
         :home (assoc player :x 5 :y 2.5)))
     player))
-
-
-;;;;;;;; more mei properties for later
-
-;;       :jump-right (util/texture-coords mei-textures [3 16])
-;;       :jump-left (g2d/texture (util/texture-coords mei-textures [3 16]) :flip true false)
-
-;;       :walk-right (g2d/animation util/duration
-;;                                  (util/texture-action-coords mei-textures 1 [0 3])
-;;                                  :set-play-mode (g2d/play-mode :loop-pingpong))
-;;       :walk-left (g2d/animation util/duration
-;;                                 (util/texture-action-coords mei-textures 3 [0 3])
-;;                                 :set-play-mode (g2d/play-mode :loop-pingpong))

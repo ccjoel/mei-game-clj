@@ -46,7 +46,7 @@
       :health 1000
       :stand-right stand-right
       :dialog "Hello!"
-      :hit-box (rectangle 15 4 2 2)
+;;       :hit-box (rectangle 15 4 2 2)
       :npc? true)))
 
 ;; (defn randomize-locations
