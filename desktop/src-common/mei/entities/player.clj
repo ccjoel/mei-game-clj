@@ -1,8 +1,10 @@
 (ns mei.entities.player
-  (:require [play-clj.core :as play]
+  (:require [clojure.pprint :refer [pprint]]
+            [play-clj.core :as play]
             [play-clj.g2d :as g2d]
+            [play-clj.math :refer [rectangle]]
             [mei.constants :as const]
-            [mei.util :as util]
+            [mei.utils :as utils]
             [mei.entities.utils :as entity-utils]
             [mei.screens.utils :as screen-utils]))
 
@@ -41,12 +43,12 @@
   other texture/animation states as conj'ed properties."
   [mei-textures]
   (when const/DEBUG_ON (println "creating mei frames..."))
-  (let [first-texture (util/texture-coords mei-textures [0 1])]
+  (let [first-texture (utils/texture-coords mei-textures [0 1])]
     (assoc first-texture
       :stand-up    first-texture
-      :stand-right (util/texture-coords mei-textures [1 1])
-      :stand-down  (util/texture-coords mei-textures [2 1])
-      :stand-left  (util/texture-coords mei-textures [3 1])
+      :stand-right (utils/texture-coords mei-textures [1 1])
+      :stand-down  (utils/texture-coords mei-textures [2 1])
+      :stand-left  (utils/texture-coords mei-textures [3 1])
       :run-up      (entity-utils/animated-texture mei-textures 0 [3 6])
       :run-right   (entity-utils/animated-texture mei-textures 1 [3 6])
       :run-down    (entity-utils/animated-texture mei-textures 2 [3 6])
@@ -157,7 +159,9 @@
       ; TODO: v .. add "recovering" state which makes invulnerable and diff animation for one second. and translate fluidly.
       ; TODO: create a damage-character function that takes care of the rest.. so that we may reuse for mobs as well
       ; check direction the player was moving in, and push the opposite direction
-      (assoc player :health (dec health) :x (- x 2) :y (- y 2) :recovering 100) ; change quantity 20
+      (do
+        (pprint player)
+        (assoc player :health (dec health) :x (- x 2) :y (- y 2) :recovering 100))
       player)))
 
 
@@ -170,8 +174,8 @@
 
 (defn use-exit?
   "Makes player exit one \"map\" and enter into another"
-  [screen {:keys [x y health] :as player}]
-  (if (entity-utils/get-touching-tile screen player "exits")
+  [screen {:keys [x y health player?] :as player}]
+  (if (and player? (entity-utils/get-touching-tile screen player "exits"))
     (do
       (when const/DEBUG_ON (println "Exiting map:" (:current-map screen)))
       ; TODO: clean this doublecase / sending play/screen! signal mess
@@ -183,3 +187,27 @@
         :house (assoc player :x 19 :y 6)
         :home (assoc player :x 5 :y 2.5)))
     player))
+
+
+(defn update-hit-box [{:keys [player?] :as entity}]
+  (if player?
+    (assoc entity :hit-box (rectangle (:x entity) (:y entity) (:width entity) (:height entity)))
+    entity))
+
+(defn update-recover-stats [{:keys [recovering] :as player}]
+  (if (> recovering 0)
+    (assoc player :recovering (dec recovering))
+    player))
+
+;; (defn fainted? [{:keys [health] :as player} game main overlay]
+;;   (when (= health 0)
+;;     (and
+;;       (play/app! :post-runnable #(play/set-screen! game main overlay))
+;;       player))
+;;   player)
+
+(defn shoot-particle [entities]
+  (let [player (entity-utils/find-id entities :mei)]
+    (conj entities (assoc (g2d/particle-effect "particles/fire.p" :scale-effect 0.003)
+                     :particle? true :direction (:direction player) :id utils/generate-uuid
+                     :x (:x player) :y (:y player)))))

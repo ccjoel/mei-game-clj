@@ -2,11 +2,11 @@
   (:require [play-clj.core :as play]
 ;;             [play-clj.repl :refer [e e! s s!]]
             [play-clj.g2d :as g2d]
-            [play-clj.math :refer [rectangle]]
             [mei.constants :as const]
             [mei.screens.overlay :refer [overlay-screen]]
             [mei.screens.error :refer [error-screen]]
             [mei.entities.player :as player]
+            [mei.entities.utils :as entity-utils]
             [mei.screens.utils :as screen-utils]
             [mei.entities.npcs :as npcs]))
 
@@ -40,20 +40,8 @@
   (fn [screen entities]
     (play/height! screen 300)))
 
-; TODO: clean up- move to player.clj
-(defn- update-player-hit-box [{:keys [player?] :as entity}]
-  (if player?
-    (assoc entity :hit-box (rectangle (:x entity) (:y entity) (:width entity) (:height entity)))
-    entity))
-
-(defn update-recover-stats [{:keys [recovering] :as player}]
-  (if (> recovering 0)
-    (assoc player :recovering (dec recovering))
-    player))
-
-(defn player-fainted? [{:keys [health] :as player}]
-  (when (= health 0) (play/app! :post-runnable #(play/set-screen! mei-game main-screen overlay-screen)))
-  player)
+;; (defn run-player-transformations [player]
+;;   )
 
 (play/defscreen main-screen
   :on-show
@@ -69,7 +57,9 @@
   (fn [screen entities]
     (play/clear!) ;  additional clear! params ...1 1 1 1 these numbers is the rgba background color
     (let [mei-player (play/find-first :player? entities)] ; there must be a player
-      (play/screen! overlay-screen :on-update-health-bar :entity mei-player))
+      (play/screen! overlay-screen :on-update-health-bar :entity mei-player)
+      (when (= (:health mei-player) 0)
+        (play/app! :post-runnable #(play/set-screen! mei-game main-screen overlay-screen))))
     (some->>
       (if (play/key-pressed? :r)
         (play/rewind! screen 2)
@@ -79,12 +69,13 @@
                       (player/move screen entities)
                       (player/prevent-move screen entities)
                       (player/animate screen)
-                      (update-player-hit-box)
-                      (update-recover-stats)
+                      (player/update-hit-box)
+                      (player/update-recover-stats)
                       (player/hit-spike screen)
-                      (player-fainted?)
                       (player/use-exit? screen))
-                 entity))
+                 (if (:particle? entity)
+                   (entity-utils/update-particle-position entities entity)
+                   entity)))
              entities))
       (play/render! screen)
       (screen-utils/update-screen! screen)))
@@ -94,7 +85,8 @@
     (cond
       (play/key-pressed? :h) (play/app! :post-runnable #(play/set-screen! mei-game main-screen overlay-screen))
       (play/key-pressed? :o) (screen-utils/update-height screen inc)
-      (play/key-pressed? :i) (screen-utils/update-height screen dec)))
+      (play/key-pressed? :i) (screen-utils/update-height screen dec)
+      (play/key-pressed? :space) (player/shoot-particle entities)))
 
   :on-start-main
   (fn [screen entities]

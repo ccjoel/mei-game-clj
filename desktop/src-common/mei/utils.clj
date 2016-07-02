@@ -7,3 +7,6 @@
 
 (defn texture-action-coords [textures-vector col [start end]]
   (subvec (nth textures-vector col) start end))
+
+(defn generate-uuid []
+  (str (java.util.UUID/randomUUID)))

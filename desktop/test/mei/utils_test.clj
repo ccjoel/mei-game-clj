@@ -32,3 +32,11 @@
     (is (=
           '(19 20 21)
           (texture-action-coords mocked-vector 2 [3 6])))))
+
+;its random.. just wanted to test the output.. could use regex
+;; (deftest generate-uuid-test
+;;   (testing "generates a uuid"
+;;     (is (=
+;;           "45656-546546546-54654654-6"
+;;           (generate-uuid)
+;;           ))))

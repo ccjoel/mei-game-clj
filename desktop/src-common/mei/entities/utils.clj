@@ -35,6 +35,7 @@
 (defn near-entity?
   [{:keys [x y id] :as e} e2 min-distance]
   (and (not= id (:id e2))
+       (:npc? e2)
        (nil? (:draw-time e2))
        (> (:health e2) 0)
        (< (Math/abs ^double (- x (:x e2))) min-distance)
@@ -47,3 +48,26 @@
 (defn find-id
   [entities id]
   (play/find-first #(= id (:id %)) entities))
+
+
+(defn update-particle-position [entities particle]
+
+  ; if particle x < map's 0
+       (if (or
+             (< (:x particle) 0)
+             (> (:x particle) const/h-home-tiles)
+             (< (:y particle) 0)
+             (> (:y particle) const/v-home-tiles)
+             )
+         particle
+         particle
+         )
+  ;    or particle x > map's width
+  ;    or particle y < map's 0
+  ;    or particle y > map's height
+         ;remove particle from map/entities
+
+;;     ;else
+       ; get direction, and inc/dec x/y depending on it
+  ; return updated entities
+  )
