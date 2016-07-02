@@ -52,14 +52,12 @@
 
 (defn update-particle-position [entities particle]
 
-  ; if particle x < map's 0
        (if (or
              (< (:x particle) 0)
              (> (:x particle) const/h-home-tiles)
              (< (:y particle) 0)
-             (> (:y particle) const/v-home-tiles)
-             )
-         particle
+             (> (:y particle) const/v-home-tiles))
+         (remove particle entities)
          particle
          )
   ;    or particle x > map's width

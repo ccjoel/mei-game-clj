@@ -74,7 +74,9 @@
                       (player/hit-spike screen)
                       (player/use-exit? screen))
                  (if (:particle? entity)
-                   (entity-utils/update-particle-position entities entity)
+;;                    (entity-utils/update-particle-position entities entity)
+                   ; todo... need o update particle position
+                   entity
                    entity)))
              entities))
       (play/render! screen)

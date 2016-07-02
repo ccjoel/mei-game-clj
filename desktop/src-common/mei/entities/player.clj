@@ -199,13 +199,6 @@
     (assoc player :recovering (dec recovering))
     player))
 
-;; (defn fainted? [{:keys [health] :as player} game main overlay]
-;;   (when (= health 0)
-;;     (and
-;;       (play/app! :post-runnable #(play/set-screen! game main overlay))
-;;       player))
-;;   player)
-
 (defn shoot-particle [entities]
   (let [player (entity-utils/find-id entities :mei)]
     (conj entities (assoc (g2d/particle-effect "particles/fire.p" :scale-effect 0.003)
