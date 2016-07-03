@@ -63,6 +63,8 @@
     (some->>
       (if (play/key-pressed? :r)
         (play/rewind! screen 2)
+
+        ; todo.. filter  particle entities that are outside of map, then remove them
         (map (fn [entity]
                (if (:player? entity)
                  (->> entity
@@ -76,7 +78,9 @@
                  (if (:particle? entity)
                    (entity-utils/update-particle-position entity)
                    entity)))
-             entities))
+             entities)
+        ; end todo
+        )
       (play/render! screen)
       (screen-utils/update-screen! screen)))
 
