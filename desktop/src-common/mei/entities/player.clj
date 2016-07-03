@@ -199,6 +199,18 @@
     (assoc player :recovering (dec recovering))
     player))
 
+(defn initial-particle-location [player]
+  ; TODO: depends on player direction, and on the x/y and its bounds
+  ; player (and the direction the particles are thrown in)
+;;      |_____
+;;      x|   |
+;;       | P |
+;;       |___|
+;; <--x       x-->
+;;       x
+;;       |
+  )
+
 (defn shoot-particle [entities]
   (let [player (entity-utils/find-id entities :mei)
         particle (assoc (g2d/particle-effect "particles/fire.p" :scale-effect 0.005)

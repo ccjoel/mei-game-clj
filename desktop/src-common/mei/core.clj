@@ -1,6 +1,5 @@
 (ns mei.core
   (:require [play-clj.core :as play]
-;;             [play-clj.repl :refer [e e! s s!]]
             [play-clj.g2d :as g2d]
             [mei.constants :as const]
             [mei.screens.overlay :refer [overlay-screen]]
@@ -12,7 +11,6 @@
 
 (declare mei-game main-screen)
 
-;; TODO: figure out how this works...
 (play/set-screen-wrapper! (fn [screen screen-fn]
                             (try (screen-fn)
                               (catch Exception e
@@ -40,9 +38,6 @@
   (fn [screen entities]
     (play/height! screen 300)))
 
-;; (defn run-player-transformations [player]
-;;   )
-
 (play/defscreen main-screen
   :on-show
   (fn [screen entities]
@@ -63,24 +58,21 @@
     (some->>
       (if (play/key-pressed? :r)
         (play/rewind! screen 2)
-
-        ; todo.. filter  particle entities that are outside of map, then remove them
-        (map (fn [entity]
-               (if (:player? entity)
-                 (->> entity
-                      (player/move screen entities)
-                      (player/prevent-move screen entities)
-                      (player/animate screen)
-                      (player/update-hit-box)
-                      (player/update-recover-stats)
-                      (player/hit-spike screen)
-                      (player/use-exit? screen))
-                 (if (:particle? entity)
-                   (entity-utils/update-particle-position entity)
-                   entity)))
-             entities)
-        ; end todo
-        )
+        (entity-utils/remove-particles-when-done
+          (map (fn [entity]
+                 (if (:player? entity)
+                   (->> entity
+                        (player/move screen entities)
+                        (player/prevent-move screen entities)
+                        (player/animate screen)
+                        (player/update-hit-box)
+                        (player/update-recover-stats)
+                        (player/hit-spike screen)
+                        (player/use-exit? screen))
+                   (if (:particle? entity)
+                     (entity-utils/update-particle-position entity)
+                     entity)))
+               entities)))
       (play/render! screen)
       (screen-utils/update-screen! screen)))
 
@@ -109,18 +101,12 @@
 
 
 ;;;; repl'ing
-
 ; nrepl port: 35647
 
 ;; (mei.core.desktop-launcher/-main)
 
-;; (e! :player? main-screen :health 10)
-
-;; (s! main-screen :height 30)
-
-;; (play/height! main-screen 40)
-
 ; after recovering from errors...
 ;; (play-clj.core/on-gl (play-clj.core/set-screen! mei-game main-screen overlay-screen))
 
+;; deref entities from screen
 ;; (-> overlay-screen :entities deref)

@@ -37,7 +37,7 @@
   (and (not= id (:id e2))
        (:npc? e2)
        (nil? (:draw-time e2))
-       (> (:health e2) 0)
+       (> (get e2 :health 1) 0)
        (< (Math/abs ^double (- x (:x e2))) min-distance)
        (< (Math/abs ^double (- y (:y e2))) min-distance)))
 
@@ -57,13 +57,12 @@
     :right (assoc particle :x (+ (:x particle) 0.08))
     :left (assoc particle :x (- (:x particle) 0.08))))
 
-(defn remove-particle-when-done [entities]
-  ;;        (if (or
-;;              (< (:x particle) 0)
-;;              (> (:x particle) const/h-home-tiles)
-;;              (< (:y particle) 0)
-;;              (> (:y particle) const/v-home-tiles))
-;;          entities
-;;          )
-  entities
-  )
+(defn remove-particles-when-done [entities]
+  (let [particles-to-remove (filter (fn [entity]
+                                      (and (get entity :particle? false)
+                                           (or
+                                             (< (:x entity) 0)
+                                             (> (:x entity) const/h-home-tiles)
+                                             (< (:y entity) 0)
+                                             (> (:y entity) const/v-home-tiles)))) entities)]
+    (remove (set particles-to-remove) entities)))
