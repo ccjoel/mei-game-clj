@@ -4,7 +4,6 @@
             [mei.constants :as const]))
 
 
-
 (defn create-npc
   "Receives a vector of columns, and returns a texture with all
   other texture/animation states as conj'ed properties."
