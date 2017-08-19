@@ -11,10 +11,10 @@
                        (g2d/texture (aget tiles 0 col)))
         stand-right (first dwarf-images)]
     (assoc stand-right
-      :width 2
-      :height 2
-      :x 15
-      :y 4.3
-      :stand-right stand-right
-      :dialog "Hello!"
-      :npc? true)))
+           :width 2
+           :height 2
+           :x 15
+           :y 4.3
+           :stand-right stand-right
+           :dialog "Hello!"
+           :npc? true)))

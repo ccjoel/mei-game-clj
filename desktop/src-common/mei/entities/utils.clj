@@ -58,11 +58,12 @@
     :left (assoc particle :x (- (:x particle) 0.08))))
 
 (defn remove-particles-when-done [entities]
-  (let [particles-to-remove (filter (fn [entity]
-                                      (and (get entity :particle? false)
-                                           (or
-                                             (< (:x entity) 0)
-                                             (> (:x entity) const/h-home-tiles)
-                                             (< (:y entity) 0)
-                                             (> (:y entity) const/v-home-tiles)))) entities)]
+  (let [particles-to-remove
+        (filter (fn [entity]
+                  (and (get entity :particle? false)
+                       (or
+                        (< (:x entity) 0)
+                        (> (:x entity) const/h-home-tiles)
+                        (< (:y entity) 0)
+                        (> (:y entity) const/v-home-tiles)))) entities)]
     (remove (set particles-to-remove) entities)))

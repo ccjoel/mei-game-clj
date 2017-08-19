@@ -45,27 +45,27 @@
   (when const/DEBUG_ON (println "creating mei frames..."))
   (let [first-texture (utils/texture-coords mei-textures [0 1])]
     (assoc first-texture
-      :stand-up    first-texture
-      :stand-right (utils/texture-coords mei-textures [1 1])
-      :stand-down  (utils/texture-coords mei-textures [2 1])
-      :stand-left  (utils/texture-coords mei-textures [3 1])
-      :run-up      (entity-utils/animated-texture mei-textures 0 [3 6])
-      :run-right   (entity-utils/animated-texture mei-textures 1 [3 6])
-      :run-down    (entity-utils/animated-texture mei-textures 2 [3 6])
-      :run-left    (entity-utils/animated-texture mei-textures 3 [3 6])
-      :width 0.8
-      :height (* (/ (-> const/sprite-map :mei :tile-height)
-                    (-> const/sprite-map :mei :tile-width))
-                 0.8)
-      :x-velocity 0
-      :y-velocity 0
-      :x 19
-      :y 6
-      :player? true
-      :id :mei
-      :health 5
-      :recovering 0
-      :direction :down)))
+           :stand-up    first-texture
+           :stand-right (utils/texture-coords mei-textures [1 1])
+           :stand-down  (utils/texture-coords mei-textures [2 1])
+           :stand-left  (utils/texture-coords mei-textures [3 1])
+           :run-up      (entity-utils/animated-texture mei-textures 0 [3 6])
+           :run-right   (entity-utils/animated-texture mei-textures 1 [3 6])
+           :run-down    (entity-utils/animated-texture mei-textures 2 [3 6])
+           :run-left    (entity-utils/animated-texture mei-textures 3 [3 6])
+           :width 0.8
+           :height (* (/ (-> const/sprite-map :mei :tile-height)
+                         (-> const/sprite-map :mei :tile-width))
+                      0.8)
+           :x-velocity 0
+           :y-velocity 0
+           :x 19
+           :y 6
+           :player? true
+           :id :mei
+           :health 5
+           :recovering 0
+           :direction :down)))
 
 
 (defn create-sprites []
@@ -108,17 +108,17 @@
   (let [direction (get-direction entity)]
     (merge entity
            (cond
-             ; animations for running up/down
+                                        ; animations for running up/down
              (not= y-velocity 0)
              (cond
                (= direction :up)  (g2d/animation->texture screen run-up)
                (= direction :down)  (g2d/animation->texture screen run-down))
-             ; animations for running right/left
+                                        ; animations for running right/left
              (not= x-velocity 0)
              (cond
                (= direction :right) (g2d/animation->texture screen run-right)
                (= direction :left)  (g2d/animation->texture screen run-left))
-             ; animations for standing
+                                        ; animations for standing
              :else
              (cond
                (= direction :up) stand-up
@@ -156,9 +156,9 @@
   (if (not (= :home (:current-map screen))) ; <- make this more reusable
     player
     (if (and (= (:recovering player) 0) (entity-utils/get-touching-tile screen player "spikes"))
-      ; TODO: v .. add "recovering" state which makes invulnerable and diff animation for one second. and translate fluidly.
-      ; TODO: create a damage-character function that takes care of the rest.. so that we may reuse for mobs as well
-      ; check direction the player was moving in, and push the opposite direction
+                                        ; TODO: v .. add "recovering" state which makes invulnerable and diff animation for one second. and translate fluidly.
+                                        ; TODO: create a damage-character function that takes care of the rest.. so that we may reuse for mobs as well
+                                        ; check direction the player was moving in, and push the opposite direction
       (do
         (pprint player)
         (assoc player :health (dec health) :x (- x 2) :y (- y 2) :recovering 100))
@@ -178,7 +178,7 @@
   (if (and player? (entity-utils/get-touching-tile screen player "exits"))
     (do
       (when const/DEBUG_ON (println "Exiting map:" (:current-map screen)))
-      ; TODO: clean this doublecase / sending play/screen! signal mess
+                                        ; TODO: clean this doublecase / sending play/screen! signal mess
       (case (:current-map screen)
         :house (enter-map "mei-home.tmx" screen :home)
         :home (enter-map "house1.tmx" screen :house))
@@ -200,21 +200,21 @@
     player))
 
 (defn initial-particle-location [player]
-  ; TODO: depends on player direction, and on the x/y and its bounds
-  ; player (and the direction the particles are thrown in)
-;;      |_____
-;;      x|   |
-;;       | P |
-;;       |___|
-;; <--x       x-->
-;;       x
-;;       |
+                                        ; TODO: depends on player direction, and on the x/y and its bounds
+                                        ; player (and the direction the particles are thrown in)
+  ;;      |_____
+  ;;      x|   |
+  ;;       | P |
+  ;;       |___|
+  ;; <--x       x-->
+  ;;       x
+  ;;       |
   )
 
 (defn shoot-particle [entities]
   (let [player (entity-utils/find-id entities :mei)
         particle (assoc (g2d/particle-effect "particles/fire.p" :scale-effect 0.005)
-                     :particle? true :direction (:direction player) :id utils/generate-uuid
-                     :x (:x player) :y (:y player))]
+                        :particle? true :direction (:direction player) :id utils/generate-uuid
+                        :x (:x player) :y (:y player))]
     (pprint particle)
     (conj entities particle)))
